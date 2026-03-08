@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmashIT — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ── FROST DESIGN TOKENS ── */
+  :root {
+    --bg:        #f7f5f0;
+    --surface:   #ffffff;
+    --dark:      #1a1a2e;
+    --accent:    #ff6b4a;
+    --accent-lt: #fff0ed;
+    --muted:     #aaa8a0;
+    --border:    #e8e4dc;
+    --success:   #2da44e;
+    --success-lt:#edfbf1;
+    --warn:      #f4a22d;
+    --warn-lt:   #fff8ec;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --r-card:    14px;
+    --r-pill:    100px;
+    --r-phone:   44px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #e8e5df;
+    font-family: var(--font-body);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 16px 60px;
+    gap: 20px;
+  }
+
+  h2.section-label {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #999;
+    text-align: center;
+  }
+
+  /* ── PHONE SHELL ── */
+  .phone {
+    width: 340px;
+    background: var(--bg);
+    border-radius: var(--r-phone);
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 2px 0 1px #d8d4cc,
+      0 24px 64px rgba(26,26,46,0.14),
+      0 4px 16px rgba(26,26,46,0.08);
+    display: flex;
+    flex-direction: column;
+    animation: riseUp 0.6s ease both;
+  }
+
+  /* notch */
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 14px; left: 50%;
+    transform: translateX(-50%);
+    width: 100px; height: 30px;
+    background: #e4e0d8;
+    border-radius: 20px;
+    z-index: 20;
+  }
+
+  .status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 52px 24px 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .status .time { color: var(--dark); font-weight: 700; font-size: 12px; }
+
+  /* scrollable body */
+  .screen-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scrollbar-width: none;
+  }
+
+  .screen-scroll::-webkit-scrollbar { display: none; }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .topbar-left {}
+
+  .greeting-sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+
+  .greeting-name {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .greeting-name span { color: var(--accent); }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .notif-btn {
+    width: 38px; height: 38px;
+    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    position: relative;
+    box-shadow: 0 1px 4px rgba(26,26,46,0.06);
+    cursor: pointer;
+  }
+
+  .notif-dot {
+    position: absolute;
+    top: 7px; right: 7px;
+    width: 7px; height: 7px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: 1.5px solid var(--bg);
+  }
+
+  .avatar {
+    width: 38px; height: 38px;
+    border-radius: 12px;
+    background: var(--dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 1px 4px rgba(26,26,46,0.1);
+  }
+
+  /* ── STATS ROW ── */
+  .stats-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .stat-card {
+    flex: 1;
+    background: var(--surface);
+    border-radius: var(--r-card);
+    padding: 14px 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: 0 1px 4px rgba(26,26,46,0.05);
+  }
+
+  .stat-card.accent-card {
+    background: var(--dark);
+    border-color: var(--dark);
+  }
+
+  .stat-icon { font-size: 18px; margin-bottom: 2px; }
+
+  .stat-value {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .stat-card.accent-card .stat-value { color: var(--accent); }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .stat-card.accent-card .stat-label { color: rgba(255,255,255,0.4); }
+
+  .stat-delta {
+    font-size: 10px;
+    color: var(--success);
+    font-weight: 600;
+  }
+
+  /* ── PRODUCTIVITY GRAPH ── */
+  .card {
+    background: var(--surface);
+    border-radius: var(--r-card);
+    border: 1px solid var(--border);
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(26,26,46,0.05);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .card-title {
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark);
+    letter-spacing: 0.01em;
+  }
+
+  .card-action {
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* mini bar chart */
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 64px;
+  }
+
+  .bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .bar {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    background: var(--border);
+    transition: height 0.3s;
+  }
+
+  .bar.active { background: var(--accent); }
+  .bar.good   { background: var(--dark); }
+
+  .bar-day {
+    font-size: 9px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .bar-day.active { color: var(--accent); }
+
+  /* ── TODAY'S TASKS ── */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .section-title {
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark);
+  }
+
+  .section-count {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .task-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .task-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 1px 3px rgba(26,26,46,0.04);
+  }
+
+  .task-item.completed { opacity: 0.6; }
+  .task-item.missed { border-color: #ffd0d0; background: #fff8f8; }
+
+  .task-check {
+    width: 22px; height: 22px;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+  }
+
+  .task-check.done {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+  }
+
+  .task-check.missed-check {
+    background: #ffebee;
+    border-color: #ef9a9a;
+    color: #e53935;
+  }
+
+  .task-info { flex: 1; min-width: 0; }
+
+  .task-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .task-item.completed .task-name {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+
+  .task-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  .task-type-pill {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: var(--r-pill);
+  }
+
+  .pill-daily { background: var(--accent-lt); color: var(--accent); }
+  .pill-scheduled { background: #eff6ff; color: #3b82f6; }
+  .pill-missed { background: #ffebee; color: #e53935; }
+
+  .task-time {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .task-pts {
+    font-family: var(--font-head);
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .pts-positive { color: var(--success); }
+  .pts-negative { color: #e53935; }
+  .pts-neutral  { color: var(--muted); }
+
+  /* ── UPCOMING ── */
+  .upcoming-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .upcoming-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 1px 3px rgba(26,26,46,0.04);
+  }
+
+  .upcoming-date-box {
+    width: 38px;
+    height: 42px;
+    background: var(--bg);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .upcoming-date-box .month {
+    font-size: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  .upcoming-date-box .day {
+    font-family: var(--font-head);
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--dark);
+    line-height: 1;
+  }
+
+  .upcoming-info { flex: 1; }
+  .upcoming-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .upcoming-sub  { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  .upcoming-arrow { font-size: 14px; color: var(--border); }
+
+  /* ── MINI LEADERBOARD ── */
+  .lb-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .lb-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .lb-row:first-child { padding-top: 0; }
+
+  .lb-rank {
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 800;
+    width: 20px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .lb-rank.top { color: var(--accent); }
+
+  .lb-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .lb-name { font-size: 12px; font-weight: 600; color: var(--dark); flex: 1; }
+  .lb-pts  { font-size: 11px; font-weight: 700; color: var(--accent); }
+
+  .lb-you {
+    background: var(--accent-lt);
+    margin: 0 -4px;
+    padding: 8px 4px;
+    border-radius: 8px;
+    border-bottom: none !important;
+  }
+
+  .lb-you .lb-name { color: var(--accent); }
+
+  /* ── STREAK CALENDAR ── */
+  .streak-row {
+    display: flex;
+    gap: 5px;
+    justify-content: space-between;
+  }
+
+  .streak-day {
+    flex: 1;
+    aspect-ratio: 1;
+    border-radius: 6px;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .streak-day.done { background: var(--dark); color: #fff; }
+  .streak-day.today { background: var(--accent); color: #fff; }
+  .streak-day .s-label { font-size: 7px; opacity: 0.7; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 12px 0 28px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 9px;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    padding: 0 8px;
+    font-family: var(--font-head);
+  }
+
+  .nav-item .nav-icon { font-size: 20px; }
+  .nav-item.active { color: var(--dark); }
+  .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+
+  /* phone-label */
+  .phone-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: #999;
+    letter-spacing: 0.05em;
+    text-align: center;
+    margin-top: 12px;
+  }
+
+  @keyframes riseUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<h2 class="section-label">SmashIT · Screen 6 of 15 · Frost Theme · Dashboard</h2>
+
+<!-- ══ DASHBOARD ══ -->
+<div class="phone">
+  <div class="status">
+    <span class="time">09:41</span>
+    <span>▮▮▮ 100%</span>
+  </div>
+
+  <div class="screen-scroll">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="greeting-sub">Wednesday, 4 Mar</div>
+        <div class="greeting-name">Hey, <span>Aryan</span> 👋</div>
+      </div>
+      <div class="topbar-right">
+        <div class="notif-btn">
+          🔔
+          <div class="notif-dot"></div>
+        </div>
+        <div class="avatar">😎</div>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="stats-row">
+      <div class="stat-card accent-card">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-value">420</div>
+        <div class="stat-label">Total Points</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-value">7</div>
+        <div class="stat-label">Day Streak</div>
+        <div class="stat-delta">↑ Best: 12</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value">80<span style="font-size:13px">%</span></div>
+        <div class="stat-label">This Week</div>
+        <div class="stat-delta">↑ +5% vs last</div>
+      </div>
+    </div>
+
+    <!-- Productivity Graph -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📈 This Week</div>
+        <div class="card-action">See all →</div>
+      </div>
+      <div class="bar-chart">
+        <div class="bar-col">
+          <div class="bar good" style="height:48px"></div>
+          <div class="bar-day">M</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar good" style="height:36px"></div>
+          <div class="bar-day">T</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar good" style="height:52px"></div>
+          <div class="bar-day">W</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar good" style="height:28px"></div>
+          <div class="bar-day">T</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar good" style="height:44px"></div>
+          <div class="bar-day">F</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar good" style="height:20px"></div>
+          <div class="bar-day">S</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar active" style="height:56px"></div>
+          <div class="bar-day active">S</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Streak Calendar -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🗓 Streak — 7 days</div>
+        <div class="card-action">History →</div>
+      </div>
+      <div class="streak-row">
+        <div class="streak-day done"><span>M</span><span style="font-size:9px">✓</span></div>
+        <div class="streak-day done"><span>T</span><span style="font-size:9px">✓</span></div>
+        <div class="streak-day done"><span>W</span><span style="font-size:9px">✓</span></div>
+        <div class="streak-day done"><span>T</span><span style="font-size:9px">✓</span></div>
+        <div class="streak-day done"><span>F</span><span style="font-size:9px">✓</span></div>
+        <div class="streak-day done"><span>S</span><span style="font-size:9px">✓</span></div>
+        <div class="streak-day today"><span>S</span><span style="font-size:9px">🔥</span></div>
+      </div>
+    </div>
+
+    <!-- Today's Tasks -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">Today's Tasks</div>
+        <div class="section-count">3 of 5 done</div>
+      </div>
+      <div class="task-list">
+
+        <div class="task-item completed">
+          <div class="task-check done">✓</div>
+          <div class="task-info">
+            <div class="task-name">Morning run</div>
+            <div class="task-meta">
+              <span class="task-type-pill pill-daily">Daily</span>
+              <span class="task-time">6:00 AM</span>
+            </div>
+          </div>
+          <div class="task-pts pts-positive">+10</div>
+        </div>
+
+        <div class="task-item completed">
+          <div class="task-check done">✓</div>
+          <div class="task-info">
+            <div class="task-name">Read 20 pages</div>
+            <div class="task-meta">
+              <span class="task-type-pill pill-daily">Daily</span>
+              <span class="task-time">8:00 AM</span>
+            </div>
+          </div>
+          <div class="task-pts pts-positive">+10</div>
+        </div>
+
+        <div class="task-item completed">
+          <div class="task-check done">✓</div>
+          <div class="task-info">
+            <div class="task-name">Meditate 10 min</div>
+            <div class="task-meta">
+              <span class="task-type-pill pill-daily">Daily</span>
+              <span class="task-time">7:00 AM</span>
+            </div>
+          </div>
+          <div class="task-pts pts-positive">+10</div>
+        </div>
+
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-info">
+            <div class="task-name">Deep work block</div>
+            <div class="task-meta">
+              <span class="task-type-pill pill-scheduled">Scheduled</span>
+              <span class="task-time">2:00 PM</span>
+            </div>
+          </div>
+          <div class="task-pts pts-neutral">+10</div>
+        </div>
+
+        <div class="task-item missed">
+          <div class="task-check missed-check">✕</div>
+          <div class="task-info">
+            <div class="task-name">Evening walk</div>
+            <div class="task-meta">
+              <span class="task-type-pill pill-missed">Missed</span>
+              <span class="task-time">Yesterday</span>
+            </div>
+          </div>
+          <div class="task-pts pts-negative">−5</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Upcoming -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">Upcoming</div>
+        <div class="card-action">See all →</div>
+      </div>
+      <div class="upcoming-list">
+
+        <div class="upcoming-item">
+          <div class="upcoming-date-box">
+            <div class="month">Mar</div>
+            <div class="day">6</div>
+          </div>
+          <div class="upcoming-info">
+            <div class="upcoming-name">Submit project report</div>
+            <div class="upcoming-sub">In 2 days · Scheduled</div>
+          </div>
+          <div class="upcoming-arrow">›</div>
+        </div>
+
+        <div class="upcoming-item">
+          <div class="upcoming-date-box">
+            <div class="month">Mar</div>
+            <div class="day">9</div>
+          </div>
+          <div class="upcoming-info">
+            <div class="upcoming-name">Weekly review</div>
+            <div class="upcoming-sub">In 5 days · Scheduled</div>
+          </div>
+          <div class="upcoming-arrow">›</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mini Leaderboard -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🏆 Friends</div>
+        <div class="card-action">Full board →</div>
+      </div>
+
+      <div class="lb-row">
+        <div class="lb-rank top">1</div>
+        <div class="lb-avatar">😎</div>
+        <div class="lb-name">Abhishek</div>
+        <div class="lb-pts">480 pts</div>
+      </div>
+
+      <div class="lb-row lb-you">
+        <div class="lb-rank top">2</div>
+        <div class="lb-avatar">🙋</div>
+        <div class="lb-name">You</div>
+        <div class="lb-pts">420 pts</div>
+      </div>
+
+      <div class="lb-row">
+        <div class="lb-rank">3</div>
+        <div class="lb-avatar">😄</div>
+        <div class="lb-name">Rahul</div>
+        <div class="lb-pts">390 pts</div>
+      </div>
+
+      <div class="lb-row">
+        <div class="lb-rank">4</div>
+        <div class="lb-avatar">🤓</div>
+        <div class="lb-name">Aman</div>
+        <div class="lb-pts">350 pts</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <div class="nav-icon">⌂</div>
+      <div>Home</div>
+      <div class="nav-dot"></div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">✓</div>
+      <div>Tasks</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">◈</div>
+      <div>Stats</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">⊞</div>
+      <div>Social</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">◯</div>
+      <div>Me</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="phone-label">06 · Dashboard</div>
+
+</body>
+</html>

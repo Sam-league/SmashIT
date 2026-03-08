@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmashIT — Login & Register</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ── FROST DESIGN TOKENS ── */
+  :root {
+    --bg:        #f7f5f0;
+    --surface:   #ffffff;
+    --dark:      #1a1a2e;
+    --accent:    #ff6b4a;
+    --accent-lt: #fff0ed;
+    --accent-dk: #e8523a;
+    --muted:     #aaa8a0;
+    --border:    #e8e4dc;
+    --text:      #1a1a2e;
+    --error:     #e53935;
+    --success:   #2e7d32;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --r-card:    12px;
+    --r-pill:    100px;
+    --r-input:   12px;
+    --r-phone:   44px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #e8e5df;
+    font-family: var(--font-body);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 16px 60px;
+    gap: 32px;
+  }
+
+  h2.section-label {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #999;
+    text-align: center;
+  }
+
+  .phones-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .phone-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    animation: riseUp 0.6s ease both;
+  }
+
+  .phone-wrap:nth-child(1) { animation-delay: 0.05s; }
+  .phone-wrap:nth-child(2) { animation-delay: 0.15s; }
+
+  .phone-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: #999;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── PHONE SHELL ── */
+  .phone {
+    width: 320px;
+    min-height: 650px;
+    background: var(--bg);
+    border-radius: var(--r-phone);
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 2px 0 1px #d8d4cc,
+      0 24px 64px rgba(26,26,46,0.14),
+      0 4px 16px rgba(26,26,46,0.08);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 30px;
+    background: #e4e0d8;
+    border-radius: 20px;
+    z-index: 20;
+  }
+
+  .status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 52px 24px 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .status .time { color: var(--dark); font-weight: 700; font-size: 12px; }
+
+  /* ── SHARED FORM STYLES ── */
+  .screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 24px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* decorative top blob */
+  .screen::before {
+    content: '';
+    position: absolute;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,107,74,0.08) 0%, transparent 70%);
+    top: -80px; right: -60px;
+    pointer-events: none;
+  }
+
+  .back-btn {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(26,26,46,0.06);
+    color: var(--dark);
+  }
+
+  .screen-header { margin-bottom: 28px; position: relative; z-index: 1; }
+
+  .screen-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+    font-family: var(--font-head);
+  }
+
+  .screen-title {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--dark);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .screen-title span { color: var(--accent); }
+
+  .screen-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .form { display: flex; flex-direction: column; gap: 14px; flex: 1; position: relative; z-index: 1; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+
+  .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--dark);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: var(--font-head);
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 14px;
+    font-size: 15px;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .input {
+    width: 100%;
+    padding: 13px 14px 13px 40px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-input);
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--dark);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .input:focus { border-color: var(--accent); }
+  .input.filled { border-color: var(--dark); }
+  .input.error-state { border-color: var(--error); }
+
+  .input-suffix {
+    position: absolute;
+    right: 14px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  /* input with value shown */
+  .input-value {
+    color: var(--dark);
+  }
+
+  /* password dots */
+  .pwd-dots {
+    letter-spacing: 3px;
+    font-size: 16px;
+    color: var(--dark);
+  }
+
+  /* field hint */
+  .field-hint {
+    font-size: 11px;
+    color: var(--muted);
+    padding-left: 2px;
+  }
+
+  .field-hint.error { color: var(--error); }
+
+  /* divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 4px 0;
+  }
+
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-text { font-size: 11px; color: var(--muted); font-weight: 500; white-space: nowrap; }
+
+  /* social login */
+  .social-row { display: flex; gap: 10px; }
+
+  .btn-social {
+    flex: 1;
+    padding: 12px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-input);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-family: var(--font-head);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dark);
+    cursor: pointer;
+  }
+
+  /* primary CTA */
+  .btn-primary {
+    width: 100%;
+    padding: 15px;
+    background: var(--dark);
+    color: #fff;
+    border: none;
+    border-radius: var(--r-pill);
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 4px 20px rgba(26,26,46,0.18);
+    margin-top: auto;
+  }
+
+  .btn-primary.accent {
+    background: var(--accent);
+    box-shadow: 0 4px 20px rgba(255,107,74,0.3);
+  }
+
+  /* forgot / switch link */
+  .link-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: -4px;
+  }
+
+  .link {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  /* bottom switch */
+  .screen-footer {
+    text-align: center;
+    padding-top: 16px;
+    font-size: 12px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .screen-footer .link { font-size: 12px; }
+
+  /* strength bar */
+  .strength-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+
+  .strength-fill {
+    height: 100%;
+    border-radius: 2px;
+    width: 60%;
+    background: linear-gradient(90deg, var(--accent), #ffb347);
+  }
+
+  /* name row */
+  .two-col { display: flex; gap: 10px; }
+  .two-col .field { flex: 1; }
+
+  /* terms */
+  .terms {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+    text-align: center;
+    padding: 0 4px;
+  }
+
+  .terms .link { font-size: 11px; }
+
+  /* ── success chip shown on register ── */
+  .success-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f0faf0;
+    color: var(--success);
+    border: 1px solid #c8e6c9;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: var(--r-pill);
+    margin-bottom: 6px;
+  }
+
+  /* animations */
+  @keyframes riseUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<h2 class="section-label">SmashIT · Screens 4–5 of 15 · Frost Theme</h2>
+
+<div class="phones-row">
+
+  <!-- ══ SCREEN 4: LOGIN ══ -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status">
+        <span class="time">09:41</span>
+        <span>▮▮▮ 100%</span>
+      </div>
+      <div class="screen">
+        <div class="back-btn">←</div>
+
+        <div class="screen-header">
+          <div class="screen-eyebrow">Welcome back</div>
+          <div class="screen-title">Log back<br>into <span>SmashIT.</span></div>
+          <div class="screen-sub">Pick up right where you left off.</div>
+        </div>
+
+        <div class="form">
+
+          <!-- Email -->
+          <div class="field">
+            <div class="field-label">Email</div>
+            <div class="input-wrap">
+              <span class="input-icon">✉</span>
+              <input class="input filled input-value" type="email" value="aryan@gmail.com" readonly />
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="field">
+            <div class="field-label">Password</div>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input class="input filled input-value pwd-dots" type="text" value="••••••••" readonly />
+              <span class="input-suffix">👁</span>
+            </div>
+          </div>
+
+          <!-- Forgot -->
+          <div class="link-row">
+            <span></span>
+            <a class="link">Forgot password?</a>
+          </div>
+
+          <!-- Divider -->
+          <div class="divider">
+            <div class="divider-line"></div>
+            <div class="divider-text">or continue with</div>
+            <div class="divider-line"></div>
+          </div>
+
+          <!-- Social -->
+          <div class="social-row">
+            <button class="btn-social">G Google</button>
+            <button class="btn-social">⌘ Apple</button>
+          </div>
+
+          <!-- CTA -->
+          <button class="btn-primary accent">Sign In →</button>
+
+        </div>
+
+        <div class="screen-footer">
+          Don't have an account? <a class="link">Sign up</a>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">04 · Login</div>
+  </div>
+
+  <!-- ══ SCREEN 5: REGISTER ══ -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status">
+        <span class="time">09:41</span>
+        <span>▮▮▮ 100%</span>
+      </div>
+      <div class="screen">
+        <div class="back-btn">←</div>
+
+        <div class="screen-header">
+          <div class="success-chip">🎉 Free forever</div>
+          <div class="screen-title">Create your<br><span>account.</span></div>
+          <div class="screen-sub">Join thousands building better habits.</div>
+        </div>
+
+        <div class="form">
+
+          <!-- Name row -->
+          <div class="two-col">
+            <div class="field">
+              <div class="field-label">First Name</div>
+              <div class="input-wrap">
+                <span class="input-icon">👤</span>
+                <input class="input filled input-value" type="text" value="Aryan" readonly />
+              </div>
+            </div>
+            <div class="field">
+              <div class="field-label">Last Name</div>
+              <div class="input-wrap">
+                <input class="input filled input-value" style="padding-left:14px" type="text" value="Shah" readonly />
+              </div>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="field">
+            <div class="field-label">Email</div>
+            <div class="input-wrap">
+              <span class="input-icon">✉</span>
+              <input class="input filled input-value" type="email" value="aryan@gmail.com" readonly />
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="field">
+            <div class="field-label">Password</div>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input class="input filled input-value pwd-dots" type="text" value="••••••••" readonly />
+              <span class="input-suffix">👁</span>
+            </div>
+            <div class="strength-bar">
+              <div class="strength-fill"></div>
+            </div>
+            <div class="field-hint">Password strength: Good</div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="field">
+            <div class="field-label">Confirm Password</div>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input class="input filled input-value pwd-dots" type="text" value="••••••••" readonly />
+              <span class="input-suffix" style="color:#2e7d32">✓</span>
+            </div>
+          </div>
+
+          <!-- Terms -->
+          <div class="terms">
+            By signing up you agree to our
+            <a class="link">Terms of Service</a> and
+            <a class="link">Privacy Policy</a>.
+          </div>
+
+          <!-- CTA -->
+          <button class="btn-primary accent">Create Account →</button>
+
+        </div>
+
+        <div class="screen-footer">
+          Already have an account? <a class="link">Sign in</a>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">05 · Register</div>
+  </div>
+
+</div>
+
+</body>
+</html>

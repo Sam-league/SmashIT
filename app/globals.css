@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg:          #f7f5f0;
+  --surface:     #ffffff;
+  --dark:        #1a1a2e;
+  --accent:      #ff6b4a;
+  --accent-lt:   #fff0ed;
+  --accent-dk:   #e8523a;
+  --muted:       #aaa8a0;
+  --border:      #e8e4dc;
+  --success:     #2da44e;
+  --success-lt:  #edfbf1;
+  --error:       #e53935;
+  --warn:        #f4a22d;
+  --warn-lt:     #fff8ec;
+  --blue:        #3b82f6;
+  --blue-lt:     #eff6ff;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-dm-sans), sans-serif;
+    background-color: var(--bg);
+    color: var(--dark);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--bg);
+    min-height: 100dvh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+  }
+}
+
+@layer utilities {
+  /* Animation keyframes */
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.6); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes floatA {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-8px); }
+  }
+  @keyframes floatB {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(8px); }
+  }
+
+  .animate-pop-in  { animation: popIn  0.5s cubic-bezier(0.34,1.56,0.64,1) 0.3s both; }
+  .animate-fade-up { animation: fadeUp 0.5s ease both; }
+  .animate-float-a { animation: floatA 3s ease-in-out infinite; }
+  .animate-float-b { animation: floatB 3s ease-in-out infinite; }
+
+  /* Hide scrollbar but keep scroll functionality */
+  .no-scrollbar::-webkit-scrollbar,
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar,
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Safe area padding for mobile notches */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

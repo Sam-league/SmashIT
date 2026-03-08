@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmashIT — Social</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #f7f5f0;
+    --surface:   #ffffff;
+    --dark:      #1a1a2e;
+    --accent:    #ff6b4a;
+    --accent-lt: #fff0ed;
+    --muted:     #aaa8a0;
+    --border:    #e8e4dc;
+    --success:   #2da44e;
+    --success-lt:#edfbf1;
+    --blue:      #3b82f6;
+    --blue-lt:   #eff6ff;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --r-card:    14px;
+    --r-pill:    100px;
+    --r-phone:   44px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #e8e5df;
+    font-family: var(--font-body);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 16px 60px;
+    gap: 32px;
+  }
+
+  h2.section-label {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #999;
+    text-align: center;
+  }
+
+  .phones-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .phone-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    animation: riseUp 0.6s ease both;
+  }
+  .phone-wrap:nth-child(1) { animation-delay: 0.05s; }
+  .phone-wrap:nth-child(2) { animation-delay: 0.15s; }
+  .phone-wrap:nth-child(3) { animation-delay: 0.25s; }
+
+  .phone-label {
+    font-size: 11px;
+    color: #999;
+    letter-spacing: 0.05em;
+    font-family: var(--font-body);
+  }
+
+  /* ── PHONE SHELL ── */
+  .phone {
+    width: 320px;
+    height: 660px;
+    background: var(--bg);
+    border-radius: var(--r-phone);
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 2px 0 1px #d8d4cc,
+      0 24px 64px rgba(26,26,46,0.14),
+      0 4px 16px rgba(26,26,46,0.08);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 14px; left: 50%;
+    transform: translateX(-50%);
+    width: 100px; height: 30px;
+    background: #e4e0d8;
+    border-radius: 20px;
+    z-index: 20;
+  }
+
+  .status {
+    display: flex;
+    justify-content: space-between;
+    padding: 52px 22px 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .status .time { color: var(--dark); font-weight: 700; font-size: 12px; }
+
+  .screen-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scrollbar-width: none;
+  }
+  .screen-scroll::-webkit-scrollbar { display: none; }
+
+  /* ── SHARED ── */
+  .page-title {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark);
+    letter-spacing: -0.02em;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .icon-btn {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: var(--accent);
+    border: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; color: #fff;
+    box-shadow: 0 2px 8px rgba(255,107,74,0.3);
+    cursor: pointer;
+  }
+
+  .back-btn {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; color: var(--dark);
+    box-shadow: 0 1px 4px rgba(26,26,46,0.06);
+    cursor: pointer; flex-shrink: 0;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 14px;
+    box-shadow: 0 1px 4px rgba(26,26,46,0.05);
+  }
+
+  .card-title {
+    font-family: var(--font-head);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dark);
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  /* search */
+  .search-wrap { position: relative; }
+  .search-icon {
+    position: absolute; left: 12px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px; color: var(--muted);
+  }
+  .search-input {
+    width: 100%;
+    padding: 11px 12px 11px 36px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--muted);
+    outline: none;
+  }
+
+  /* bottom nav */
+  .bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 12px 0 28px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .nav-item {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 3px;
+    font-size: 9px; color: var(--muted);
+    font-weight: 600; letter-spacing: 0.04em;
+    cursor: pointer; padding: 0 8px;
+    font-family: var(--font-head);
+  }
+  .nav-item .nav-icon { font-size: 20px; }
+  .nav-item.active { color: var(--dark); }
+  .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+
+  /* ══════════════════════════
+     SCREEN 11 — LEADERBOARD
+  ══════════════════════════ */
+
+  /* podium */
+  .podium {
+    background: var(--dark);
+    border-radius: var(--r-card);
+    padding: 20px 16px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .podium::before {
+    content: '';
+    position: absolute;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,107,74,0.1);
+    top: -80px; right: -40px;
+    pointer-events: none;
+  }
+
+  .podium-title {
+    font-family: var(--font-head);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .podium-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .podium-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .podium-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    border: 2px solid rgba(255,255,255,0.15);
+    position: relative;
+  }
+
+  .podium-item.first .podium-avatar {
+    width: 56px; height: 56px;
+    font-size: 28px;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(255,107,74,0.25);
+  }
+
+  .podium-crown {
+    position: absolute;
+    top: -14px;
+    font-size: 14px;
+  }
+
+  .podium-name {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+  }
+
+  .podium-pts {
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 600;
+  }
+
+  .podium-item.first .podium-pts { color: var(--accent); font-weight: 700; }
+
+  .podium-bar {
+    width: 56px;
+    border-radius: 6px 6px 0 0;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .podium-item.first .podium-bar { background: rgba(255,107,74,0.2); }
+
+  .podium-rank {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .podium-item.first .podium-rank { color: var(--accent); font-size: 13px; }
+
+  /* leaderboard list */
+  .lb-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .lb-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 11px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 1px 3px rgba(26,26,46,0.04);
+  }
+
+  .lb-item.you-row {
+    border-color: var(--accent);
+    background: var(--accent-lt);
+  }
+
+  .lb-rank {
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 800;
+    width: 22px;
+    text-align: center;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .lb-rank.top3 { color: var(--dark); }
+  .lb-rank.you-rank { color: var(--accent); }
+
+  .lb-avatar-wrap { position: relative; flex-shrink: 0; }
+
+  .lb-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+  }
+
+  .lb-item.you-row .lb-avatar {
+    border-color: var(--accent);
+    background: #fff;
+  }
+
+  .lb-online {
+    position: absolute;
+    bottom: 1px; right: 1px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+    border: 1.5px solid var(--surface);
+  }
+
+  .lb-info { flex: 1; min-width: 0; }
+  .lb-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .lb-item.you-row .lb-name { color: var(--accent); }
+  .lb-sub  { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+  .lb-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+
+  .lb-pts {
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--dark);
+  }
+
+  .lb-item.you-row .lb-pts { color: var(--accent); }
+
+  .lb-delta {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--success);
+  }
+
+  .lb-delta.neg { color: var(--error); }
+
+  /* ══════════════════════════
+     SCREEN 12 — FRIENDS
+  ══════════════════════════ */
+
+  .friend-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 11px 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 1px 3px rgba(26,26,46,0.04);
+  }
+
+  .friend-avatar-wrap { position: relative; flex-shrink: 0; }
+
+  .friend-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 19px;
+  }
+
+  .f-online {
+    position: absolute;
+    bottom: 1px; right: 1px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--success);
+    border: 1.5px solid var(--surface);
+  }
+
+  .friend-info { flex: 1; min-width: 0; }
+  .friend-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .friend-sub  { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  .friend-pts {
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--dark);
+    flex-shrink: 0;
+  }
+
+  .friend-chevron { color: var(--border); font-size: 14px; flex-shrink: 0; }
+
+  /* pending request card */
+  .req-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 12px 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 1px 3px rgba(26,26,46,0.04);
+  }
+
+  .req-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+  }
+
+  .req-info { flex: 1; }
+  .req-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .req-sub  { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+  .req-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+  .btn-accept {
+    padding: 6px 12px;
+    background: var(--dark);
+    color: #fff;
+    border: none;
+    border-radius: var(--r-pill);
+    font-family: var(--font-head);
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn-decline {
+    padding: 6px 12px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    font-family: var(--font-head);
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .section-label-sm {
+    font-family: var(--font-head);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ══════════════════════════
+     SCREEN 13 — FRIEND PROFILE
+  ══════════════════════════ */
+
+  .profile-screen { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* hero */
+  .profile-hero {
+    background: var(--dark);
+    padding: 14px 20px 28px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .profile-hero::before {
+    content: '';
+    position: absolute;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(255,107,74,0.1);
+    top: -50px; right: -30px;
+  }
+
+  .profile-hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .hero-back { color: rgba(255,255,255,0.5); font-size: 20px; cursor: pointer; }
+
+  .hero-actions { display: flex; gap: 8px; }
+
+  .hero-btn {
+    padding: 5px 12px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: var(--r-pill);
+    font-family: var(--font-head);
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .hero-btn.accent-btn {
+    background: var(--accent);
+    box-shadow: 0 2px 8px rgba(255,107,74,0.4);
+  }
+
+  .profile-avatar-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative; z-index: 1;
+  }
+
+  .profile-avatar {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 2.5px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .profile-online {
+    position: absolute;
+    bottom: 2px; right: 2px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--success);
+    border: 2px solid var(--dark);
+  }
+
+  .profile-info {}
+
+  .profile-name {
+    font-family: var(--font-head);
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .profile-handle {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 2px;
+  }
+
+  .profile-stats-row {
+    display: flex;
+    gap: 0;
+    margin-top: 16px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative; z-index: 1;
+  }
+
+  .profile-stat {
+    flex: 1;
+    padding: 10px 8px;
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .profile-stat:last-child { border-right: none; }
+
+  .profile-stat-val {
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .profile-stat-val.accent { color: var(--accent); }
+
+  .profile-stat-label {
+    font-size: 8px;
+    color: rgba(255,255,255,0.35);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+  }
+
+  /* profile body */
+  .profile-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scrollbar-width: none;
+  }
+  .profile-body::-webkit-scrollbar { display: none; }
+
+  /* comparison bar */
+  .compare-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .compare-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .compare-label {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 600;
+    width: 52px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: var(--font-head);
+  }
+
+  .compare-track {
+    flex: 1;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .compare-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+
+  .compare-val {
+    font-family: var(--font-head);
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--dark);
+    width: 32px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* recent achievements */
+  .achievement-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .achievement-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 10px 12px;
+  }
+
+  .ach-icon {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+    background: var(--bg);
+  }
+
+  .ach-info { flex: 1; }
+  .ach-name { font-size: 12px; font-weight: 600; color: var(--dark); }
+  .ach-date { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+  .ach-pts {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  @keyframes riseUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 700px) {
+    .phones-row { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<h2 class="section-label">SmashIT · Screens 11–13 of 15 · Frost Theme · Social</h2>
+
+<div class="phones-row">
+
+  <!-- ══ SCREEN 11: LEADERBOARD ══ -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status">
+        <span class="time">09:41</span>
+        <span>▮▮▮ 100%</span>
+      </div>
+      <div class="screen-scroll">
+
+        <div class="page-header">
+          <div class="page-title">Leaderboard</div>
+          <div style="font-size:11px; color:var(--muted); font-weight:600">This Week</div>
+        </div>
+
+        <!-- Podium -->
+        <div class="podium">
+          <div class="podium-title">🏆 Top Performers</div>
+          <div class="podium-row">
+
+            <!-- 2nd -->
+            <div class="podium-item">
+              <div class="podium-avatar">😄</div>
+              <div class="podium-name">Rahul</div>
+              <div class="podium-pts">390</div>
+              <div class="podium-bar" style="height:40px"></div>
+              <div class="podium-rank">2</div>
+            </div>
+
+            <!-- 1st -->
+            <div class="podium-item first">
+              <div class="podium-avatar">
+                <div class="podium-crown">👑</div>
+                😎
+              </div>
+              <div class="podium-name">Abhishek</div>
+              <div class="podium-pts">480 pts</div>
+              <div class="podium-bar" style="height:60px"></div>
+              <div class="podium-rank">1</div>
+            </div>
+
+            <!-- 3rd -->
+            <div class="podium-item">
+              <div class="podium-avatar">🤓</div>
+              <div class="podium-name">Aman</div>
+              <div class="podium-pts">350</div>
+              <div class="podium-bar" style="height:28px"></div>
+              <div class="podium-rank">3</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Full list -->
+        <div class="lb-list">
+
+          <div class="lb-item">
+            <div class="lb-rank top3">1</div>
+            <div class="lb-avatar-wrap">
+              <div class="lb-avatar">😎</div>
+              <div class="lb-online"></div>
+            </div>
+            <div class="lb-info">
+              <div class="lb-name">Abhishek</div>
+              <div class="lb-sub">🔥 12 day streak</div>
+            </div>
+            <div class="lb-right">
+              <div class="lb-pts">480</div>
+              <div class="lb-delta">↑ +40 today</div>
+            </div>
+          </div>
+
+          <div class="lb-item you-row">
+            <div class="lb-rank you-rank">2</div>
+            <div class="lb-avatar-wrap">
+              <div class="lb-avatar">🙋</div>
+              <div class="lb-online"></div>
+            </div>
+            <div class="lb-info">
+              <div class="lb-name">You</div>
+              <div class="lb-sub">🔥 7 day streak</div>
+            </div>
+            <div class="lb-right">
+              <div class="lb-pts">420</div>
+              <div class="lb-delta">↑ +30 today</div>
+            </div>
+          </div>
+
+          <div class="lb-item">
+            <div class="lb-rank top3">3</div>
+            <div class="lb-avatar-wrap">
+              <div class="lb-avatar">😄</div>
+            </div>
+            <div class="lb-info">
+              <div class="lb-name">Rahul</div>
+              <div class="lb-sub">🔥 5 day streak</div>
+            </div>
+            <div class="lb-right">
+              <div class="lb-pts">390</div>
+              <div class="lb-delta">↑ +10 today</div>
+            </div>
+          </div>
+
+          <div class="lb-item">
+            <div class="lb-rank">4</div>
+            <div class="lb-avatar-wrap">
+              <div class="lb-avatar">🤓</div>
+            </div>
+            <div class="lb-info">
+              <div class="lb-name">Aman</div>
+              <div class="lb-sub">🔥 3 day streak</div>
+            </div>
+            <div class="lb-right">
+              <div class="lb-pts">350</div>
+              <div class="lb-delta neg">↓ −5 today</div>
+            </div>
+          </div>
+
+          <div class="lb-item">
+            <div class="lb-rank">5</div>
+            <div class="lb-avatar-wrap">
+              <div class="lb-avatar">😅</div>
+            </div>
+            <div class="lb-info">
+              <div class="lb-name">Priya</div>
+              <div class="lb-sub">No streak</div>
+            </div>
+            <div class="lb-right">
+              <div class="lb-pts">290</div>
+              <div class="lb-delta neg">↓ −5 today</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item"><div class="nav-icon">⌂</div><div>Home</div></div>
+        <div class="nav-item"><div class="nav-icon">✓</div><div>Tasks</div></div>
+        <div class="nav-item"><div class="nav-icon">◈</div><div>Stats</div></div>
+        <div class="nav-item active"><div class="nav-icon">⊞</div><div>Social</div><div class="nav-dot"></div></div>
+        <div class="nav-item"><div class="nav-icon">◯</div><div>Me</div></div>
+      </div>
+    </div>
+    <div class="phone-label">11 · Leaderboard</div>
+  </div>
+
+  <!-- ══ SCREEN 12: FRIENDS ══ -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status">
+        <span class="time">09:41</span>
+        <span>▮▮▮ 100%</span>
+      </div>
+      <div class="screen-scroll">
+
+        <div class="page-header">
+          <div class="page-title">Friends</div>
+          <div class="icon-btn">+</div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" placeholder="Search friends..." readonly />
+        </div>
+
+        <!-- Pending requests -->
+        <div class="section-label-sm">Pending · 2</div>
+
+        <div class="req-card">
+          <div class="req-avatar">🧑</div>
+          <div class="req-info">
+            <div class="req-name">Vikram S.</div>
+            <div class="req-sub">Sent you a request</div>
+          </div>
+          <div class="req-actions">
+            <button class="btn-accept">Accept</button>
+            <button class="btn-decline">✕</button>
+          </div>
+        </div>
+
+        <div class="req-card">
+          <div class="req-avatar">👩</div>
+          <div class="req-info">
+            <div class="req-name">Sneha K.</div>
+            <div class="req-sub">Sent you a request</div>
+          </div>
+          <div class="req-actions">
+            <button class="btn-accept">Accept</button>
+            <button class="btn-decline">✕</button>
+          </div>
+        </div>
+
+        <!-- Friends list -->
+        <div class="section-label-sm">Friends · 4</div>
+
+        <div class="friend-item">
+          <div class="friend-avatar-wrap">
+            <div class="friend-avatar">😎</div>
+            <div class="f-online"></div>
+          </div>
+          <div class="friend-info">
+            <div class="friend-name">Abhishek</div>
+            <div class="friend-sub">🔥 12 streak · Online</div>
+          </div>
+          <div class="friend-pts">480</div>
+          <div class="friend-chevron">›</div>
+        </div>
+
+        <div class="friend-item">
+          <div class="friend-avatar-wrap">
+            <div class="friend-avatar">😄</div>
+            <div class="f-online"></div>
+          </div>
+          <div class="friend-info">
+            <div class="friend-name">Rahul</div>
+            <div class="friend-sub">🔥 5 streak · Online</div>
+          </div>
+          <div class="friend-pts">390</div>
+          <div class="friend-chevron">›</div>
+        </div>
+
+        <div class="friend-item">
+          <div class="friend-avatar-wrap">
+            <div class="friend-avatar">🤓</div>
+          </div>
+          <div class="friend-info">
+            <div class="friend-name">Aman</div>
+            <div class="friend-sub">🔥 3 streak · 2h ago</div>
+          </div>
+          <div class="friend-pts">350</div>
+          <div class="friend-chevron">›</div>
+        </div>
+
+        <div class="friend-item">
+          <div class="friend-avatar-wrap">
+            <div class="friend-avatar">😅</div>
+          </div>
+          <div class="friend-info">
+            <div class="friend-name">Priya</div>
+            <div class="friend-sub">No streak · 1d ago</div>
+          </div>
+          <div class="friend-pts">290</div>
+          <div class="friend-chevron">›</div>
+        </div>
+
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item"><div class="nav-icon">⌂</div><div>Home</div></div>
+        <div class="nav-item"><div class="nav-icon">✓</div><div>Tasks</div></div>
+        <div class="nav-item"><div class="nav-icon">◈</div><div>Stats</div></div>
+        <div class="nav-item active"><div class="nav-icon">⊞</div><div>Social</div><div class="nav-dot"></div></div>
+        <div class="nav-item"><div class="nav-icon">◯</div><div>Me</div></div>
+      </div>
+    </div>
+    <div class="phone-label">12 · Friends</div>
+  </div>
+
+  <!-- ══ SCREEN 13: FRIEND PROFILE ══ -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status" style="position:absolute;top:0;left:0;right:0;z-index:10;padding-top:52px;padding-left:22px;padding-right:22px;">
+        <span class="time" style="color:rgba(255,255,255,0.6)">09:41</span>
+        <span style="color:rgba(255,255,255,0.3)">▮▮▮ 100%</span>
+      </div>
+
+      <div class="profile-screen">
+        <!-- Hero -->
+        <div class="profile-hero" style="padding-top:60px">
+          <div class="profile-hero-top">
+            <div class="hero-back">←</div>
+            <div class="hero-actions">
+              <button class="hero-btn">Remove</button>
+              <button class="hero-btn accent-btn">Challenge 🔥</button>
+            </div>
+          </div>
+
+          <div class="profile-avatar-row">
+            <div class="profile-avatar">
+              😎
+              <div class="profile-online"></div>
+            </div>
+            <div class="profile-info">
+              <div class="profile-name">Abhishek</div>
+              <div class="profile-handle">@abhishek · Online now</div>
+            </div>
+          </div>
+
+          <div class="profile-stats-row">
+            <div class="profile-stat">
+              <div class="profile-stat-val accent">480</div>
+              <div class="profile-stat-label">Points</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-val">🔥 12</div>
+              <div class="profile-stat-label">Streak</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-val">87%</div>
+              <div class="profile-stat-label">Rate</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-val">42</div>
+              <div class="profile-stat-label">Done</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="profile-body">
+
+          <!-- vs You comparison -->
+          <div class="card">
+            <div class="card-title">📊 vs You</div>
+            <div class="compare-row">
+              <div class="compare-item">
+                <div class="compare-label">Points</div>
+                <div class="compare-track">
+                  <div class="compare-fill" style="width:100%;background:var(--dark)"></div>
+                </div>
+                <div class="compare-val">480</div>
+              </div>
+              <div class="compare-item">
+                <div class="compare-label" style="color:var(--accent)">You</div>
+                <div class="compare-track">
+                  <div class="compare-fill" style="width:87%;background:var(--accent)"></div>
+                </div>
+                <div class="compare-val" style="color:var(--accent)">420</div>
+              </div>
+              <div class="compare-item" style="margin-top:6px">
+                <div class="compare-label">Streak</div>
+                <div class="compare-track">
+                  <div class="compare-fill" style="width:100%;background:var(--dark)"></div>
+                </div>
+                <div class="compare-val">12d</div>
+              </div>
+              <div class="compare-item">
+                <div class="compare-label" style="color:var(--accent)">You</div>
+                <div class="compare-track">
+                  <div class="compare-fill" style="width:58%;background:var(--accent)"></div>
+                </div>
+                <div class="compare-val" style="color:var(--accent)">7d</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent achievements -->
+          <div class="card">
+            <div class="card-title">🏅 Achievements</div>
+            <div class="achievement-list">
+              <div class="achievement-item">
+                <div class="ach-icon" style="background:#fff8ec">🔥</div>
+                <div class="ach-info">
+                  <div class="ach-name">10 Day Streak</div>
+                  <div class="ach-date">Unlocked Feb 28</div>
+                </div>
+                <div class="ach-pts">+50</div>
+              </div>
+              <div class="achievement-item">
+                <div class="ach-icon" style="background:var(--success-lt)">⚡</div>
+                <div class="ach-info">
+                  <div class="ach-name">400 Points</div>
+                  <div class="ach-date">Unlocked Mar 1</div>
+                </div>
+                <div class="ach-pts">+25</div>
+              </div>
+              <div class="achievement-item">
+                <div class="ach-icon" style="background:var(--accent-lt)">🎯</div>
+                <div class="ach-info">
+                  <div class="ach-name">50 Tasks Done</div>
+                  <div class="ach-date">Unlocked Mar 3</div>
+                </div>
+                <div class="ach-pts">+30</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item"><div class="nav-icon">⌂</div><div>Home</div></div>
+        <div class="nav-item"><div class="nav-icon">✓</div><div>Tasks</div></div>
+        <div class="nav-item"><div class="nav-icon">◈</div><div>Stats</div></div>
+        <div class="nav-item active"><div class="nav-icon">⊞</div><div>Social</div><div class="nav-dot"></div></div>
+        <div class="nav-item"><div class="nav-icon">◯</div><div>Me</div></div>
+      </div>
+    </div>
+    <div class="phone-label">13 · Friend Profile</div>
+  </div>
+
+</div>
+</body>
+</html>

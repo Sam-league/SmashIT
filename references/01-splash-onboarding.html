@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmashIT — Splash & Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ── FROST DESIGN TOKENS ── */
+  :root {
+    --bg:        #f7f5f0;
+    --surface:   #ffffff;
+    --dark:      #1a1a2e;
+    --accent:    #ff6b4a;
+    --accent-lt: #fff0ed;
+    --muted:     #aaa8a0;
+    --border:    #e8e4dc;
+    --text:      #1a1a2e;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --r-card:    12px;
+    --r-pill:    100px;
+    --r-phone:   44px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #e8e5df;
+    font-family: var(--font-body);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 40px 16px 60px;
+    gap: 32px;
+  }
+
+  h2.section-label {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #999;
+    text-align: center;
+  }
+
+  /* ── PHONE WRAPPER ── */
+  .phones-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .phone-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    animation: riseUp 0.7s ease both;
+  }
+
+  .phone-wrap:nth-child(1) { animation-delay: 0.05s; }
+  .phone-wrap:nth-child(2) { animation-delay: 0.15s; }
+  .phone-wrap:nth-child(3) { animation-delay: 0.25s; }
+
+  .phone-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: #999;
+    letter-spacing: 0.05em;
+  }
+
+  .phone {
+    width: 300px;
+    height: 620px;
+    background: var(--bg);
+    border-radius: var(--r-phone);
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 2px 0 1px #d8d4cc,
+      0 24px 64px rgba(26,26,46,0.14),
+      0 4px 16px rgba(26,26,46,0.08);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* notch */
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 30px;
+    background: #e4e0d8;
+    border-radius: 20px;
+    z-index: 20;
+  }
+
+  /* status bar */
+  .status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 52px 24px 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .status .time { color: var(--dark); font-weight: 700; font-size: 12px; }
+
+  /* ════════════════════════════
+     SCREEN 1 — SPLASH
+  ════════════════════════════ */
+  .splash {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 28px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* decorative circles */
+  .splash::before {
+    content: '';
+    position: absolute;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,107,74,0.12) 0%, transparent 70%);
+    top: -60px; right: -80px;
+    pointer-events: none;
+  }
+
+  .splash::after {
+    content: '';
+    position: absolute;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(26,26,46,0.06) 0%, transparent 70%);
+    bottom: 60px; left: -60px;
+    pointer-events: none;
+  }
+
+  .splash-logo {
+    width: 72px; height: 72px;
+    background: var(--dark);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(26,26,46,0.2);
+    animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;
+    position: relative; z-index: 1;
+  }
+
+  .splash-title {
+    font-family: var(--font-head);
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--dark);
+    letter-spacing: -0.03em;
+    text-align: center;
+    line-height: 1;
+    animation: fadeUp 0.5s ease 0.45s both;
+    position: relative; z-index: 1;
+  }
+
+  .splash-title span { color: var(--accent); }
+
+  .splash-sub {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 10px;
+    line-height: 1.5;
+    font-weight: 400;
+    animation: fadeUp 0.5s ease 0.55s both;
+    position: relative; z-index: 1;
+  }
+
+  .splash-dots {
+    display: flex;
+    gap: 6px;
+    margin-top: 36px;
+    animation: fadeUp 0.5s ease 0.65s both;
+    position: relative; z-index: 1;
+  }
+
+  .splash-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .splash-dot.active {
+    width: 20px;
+    border-radius: 3px;
+    background: var(--accent);
+  }
+
+  /* ════════════════════════════
+     SCREEN 2 — ONBOARDING SLIDE 1
+  ════════════════════════════ */
+  .onboard {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 24px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .onboard-skip {
+    align-self: flex-end;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+    padding: 4px 0;
+    cursor: pointer;
+  }
+
+  .onboard-illustration {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* illustration: floating task cards */
+  .illus-card {
+    position: absolute;
+    background: var(--surface);
+    border-radius: var(--r-card);
+    padding: 10px 14px;
+    box-shadow: 0 4px 16px rgba(26,26,46,0.08);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .illus-card .ic-check {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #fff; flex-shrink: 0;
+  }
+
+  .illus-card .ic-text { font-size: 11px; color: var(--dark); font-weight: 500; }
+  .illus-card .ic-pts { font-size: 10px; color: var(--accent); font-weight: 700; margin-left: auto; padding-left: 8px; }
+
+  .card-a { top: 20px; left: -8px; width: 200px; animation: floatA 3s ease-in-out infinite; }
+  .card-b { top: 90px; right: -8px; width: 190px; animation: floatB 3s ease-in-out 0.5s infinite; }
+  .card-c { bottom: 40px; left: 0px; width: 210px; animation: floatA 3s ease-in-out 1s infinite; }
+
+  .illus-center {
+    width: 100px; height: 100px;
+    background: var(--dark);
+    border-radius: 28px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px;
+    box-shadow: 0 12px 32px rgba(26,26,46,0.22);
+    z-index: 1;
+  }
+
+  .onboard-content { flex-shrink: 0; }
+
+  .onboard-tag {
+    display: inline-block;
+    background: var(--accent-lt);
+    color: var(--accent);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: var(--r-pill);
+    margin-bottom: 10px;
+  }
+
+  .onboard-title {
+    font-family: var(--font-head);
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--dark);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+
+  .onboard-title span { color: var(--accent); }
+
+  .onboard-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .onboard-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .onboard-dots { display: flex; gap: 5px; }
+  .onboard-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
+  .onboard-dot.active { width: 18px; border-radius: 3px; background: var(--accent); }
+
+  .btn-next {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; color: #fff;
+    box-shadow: 0 4px 16px rgba(255,107,74,0.35);
+    cursor: pointer;
+  }
+
+  /* ════════════════════════════
+     SCREEN 3 — GET STARTED
+  ════════════════════════════ */
+  .getstarted {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 24px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* big decorative bg text */
+  .gs-bg-text {
+    position: absolute;
+    font-family: var(--font-head);
+    font-size: 120px;
+    font-weight: 800;
+    color: rgba(26,26,46,0.04);
+    letter-spacing: -0.05em;
+    top: 20px;
+    left: -8px;
+    line-height: 1;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .gs-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .gs-logo {
+    width: 36px; height: 36px;
+    background: var(--dark);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .gs-step {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--font-head);
+    letter-spacing: 0.05em;
+  }
+
+  .gs-illustration {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* leaderboard mini preview */
+  .gs-lb {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 16px;
+    width: 220px;
+    box-shadow: 0 8px 32px rgba(26,26,46,0.1);
+    border: 1px solid var(--border);
+    position: relative; z-index: 1;
+  }
+
+  .gs-lb-title {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dark);
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  .gs-lb-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .gs-lb-row:last-child { border-bottom: none; }
+
+  .gs-lb-rank {
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    width: 18px;
+    color: var(--muted);
+  }
+
+  .gs-lb-rank.first { color: var(--accent); }
+
+  .gs-lb-avatar {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .gs-lb-name { font-size: 11px; font-weight: 600; color: var(--dark); flex: 1; }
+  .gs-lb-pts { font-size: 10px; font-weight: 700; color: var(--accent); }
+
+  .gs-lb-highlight { background: var(--accent-lt); border-radius: 6px; margin: 0 -4px; padding: 6px 4px; }
+
+  /* floating achievement badge */
+  .gs-badge {
+    position: absolute;
+    top: 10px; right: -10px;
+    background: var(--dark);
+    color: #fff;
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 10px;
+    font-weight: 600;
+    display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 4px 16px rgba(26,26,46,0.2);
+    animation: floatB 2.5s ease-in-out infinite;
+    z-index: 2;
+  }
+
+  .gs-streak-badge {
+    position: absolute;
+    bottom: 20px; left: -10px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 10px;
+    font-weight: 600;
+    display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 4px 16px rgba(255,107,74,0.35);
+    animation: floatA 2.5s ease-in-out 0.5s infinite;
+    z-index: 2;
+  }
+
+  .gs-content { flex-shrink: 0; }
+
+  .gs-title {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--dark);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+
+  .gs-title span { color: var(--accent); }
+
+  .gs-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: var(--dark);
+    color: #fff;
+    border: none;
+    border-radius: var(--r-pill);
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 20px rgba(26,26,46,0.2);
+  }
+
+  .btn-secondary {
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    color: var(--dark);
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-pill);
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+
+  .btn-accent {
+    background: var(--accent);
+    box-shadow: 0 4px 20px rgba(255,107,74,0.3);
+  }
+
+  /* ── Keyframes ── */
+  @keyframes riseUp {
+    from { opacity: 0; transform: translateY(32px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.6); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes floatA {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-8px); }
+  }
+
+  @keyframes floatB {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(8px); }
+  }
+
+  @media (max-width: 700px) {
+    .phones-row { flex-direction: column; align-items: center; }
+    .phone { width: 100%; max-width: 340px; }
+  }
+</style>
+</head>
+<body>
+
+<h2 class="section-label">SmashIT · Screens 1–3 of 15 · Frost Theme</h2>
+
+<div class="phones-row">
+
+  <!-- ══ SCREEN 1: SPLASH ══ -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status">
+        <span class="time">09:41</span>
+        <span>▮▮▮ 100%</span>
+      </div>
+      <div class="splash">
+        <div class="splash-logo">⚡</div>
+        <div class="splash-title">Smash<span>IT</span></div>
+        <div class="splash-sub">Build habits. Earn points.<br>Beat your friends.</div>
+        <div class="splash-dots">
+          <div class="splash-dot active"></div>
+          <div class="splash-dot"></div>
+          <div class="splash-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">01 · Splash Screen</div>
+  </div>
+
+  <!-- ══ SCREEN 2: ONBOARDING ══ -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status">
+        <span class="time">09:41</span>
+        <span>▮▮▮ 100%</span>
+      </div>
+      <div class="onboard">
+        <div class="onboard-skip">Skip</div>
+
+        <div class="onboard-illustration">
+          <div class="illus-center">✅</div>
+          <div class="illus-card card-a">
+            <div class="ic-check">✓</div>
+            <span class="ic-text">Morning run</span>
+            <span class="ic-pts">+10</span>
+          </div>
+          <div class="illus-card card-b">
+            <div class="ic-check">✓</div>
+            <span class="ic-text">Read 20 pages</span>
+            <span class="ic-pts">+10</span>
+          </div>
+          <div class="illus-card card-c">
+            <div class="ic-check" style="background:var(--border)"></div>
+            <span class="ic-text" style="color:var(--muted)">Deep work block</span>
+            <span class="ic-pts" style="color:var(--border)">+10</span>
+          </div>
+        </div>
+
+        <div class="onboard-content">
+          <div class="onboard-tag">Tasks</div>
+          <div class="onboard-title">Build habits,<br><span>earn points.</span></div>
+          <div class="onboard-desc">Create daily and scheduled tasks. Complete them to earn points — miss them and lose some.</div>
+          <div class="onboard-nav">
+            <div class="onboard-dots">
+              <div class="onboard-dot active"></div>
+              <div class="onboard-dot"></div>
+              <div class="onboard-dot"></div>
+            </div>
+            <button class="btn-next">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">02 · Onboarding — Tasks</div>
+  </div>
+
+  <!-- ══ SCREEN 3: GET STARTED ══ -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="status">
+        <span class="time">09:41</span>
+        <span>▮▮▮ 100%</span>
+      </div>
+      <div class="getstarted">
+        <div class="gs-bg-text">WIN</div>
+
+        <div class="gs-top">
+          <div class="gs-logo">⚡</div>
+          <div class="gs-step">3 of 3</div>
+        </div>
+
+        <div class="gs-illustration">
+          <div class="gs-lb">
+            <div class="gs-lb-title">🏆 Leaderboard</div>
+            <div class="gs-lb-row">
+              <div class="gs-lb-rank first">1</div>
+              <div class="gs-lb-avatar">😎</div>
+              <div class="gs-lb-name">Abhishek</div>
+              <div class="gs-lb-pts">420 pts</div>
+            </div>
+            <div class="gs-lb-row gs-lb-highlight">
+              <div class="gs-lb-rank" style="color:var(--accent)">2</div>
+              <div class="gs-lb-avatar">🙋</div>
+              <div class="gs-lb-name" style="color:var(--accent)">You</div>
+              <div class="gs-lb-pts">390 pts</div>
+            </div>
+            <div class="gs-lb-row">
+              <div class="gs-lb-rank">3</div>
+              <div class="gs-lb-avatar">😄</div>
+              <div class="gs-lb-name">Rahul</div>
+              <div class="gs-lb-pts">350 pts</div>
+            </div>
+          </div>
+          <div class="gs-badge">🏅 Achievement unlocked!</div>
+          <div class="gs-streak-badge">🔥 7 day streak</div>
+        </div>
+
+        <div class="gs-content">
+          <div class="gs-title">Compete with<br><span>your friends.</span></div>
+          <div class="gs-desc">Climb the leaderboard, unlock achievements, and stay on top of your game.</div>
+          <button class="btn-primary btn-accent">Get Started →</button>
+          <button class="btn-secondary">I already have an account</button>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">03 · Get Started</div>
+  </div>
+
+</div>
+
+</body>
+</html>
