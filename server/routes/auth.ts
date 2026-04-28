@@ -6,7 +6,7 @@ import User from '../models/User'
 const router = Router()
 
 function signAccess(userId: string) {
-  return jwt.sign({ userId }, process.env.JWT_SECRET as string, { expiresIn: '15m' })
+  return jwt.sign({ userId }, process.env.JWT_SECRET as string, { expiresIn: '1h' })
 }
 
 function signRefresh(userId: string) {
@@ -36,9 +36,9 @@ router.post('/register', async (req: Request, res: Response) => {
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      secure:   true,
+      sameSite: 'none',   // required for cross-origin (Vercel → Railway)
+      maxAge:   30 * 24 * 60 * 60 * 1000,
     })
 
     res.status(201).json({
@@ -75,9 +75,9 @@ router.post('/login', async (req: Request, res: Response) => {
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      secure:   true,
+      sameSite: 'none',   // required for cross-origin (Vercel → Railway)
+      maxAge:   30 * 24 * 60 * 60 * 1000,
     })
 
     res.json({
@@ -95,7 +95,7 @@ router.post('/login', async (req: Request, res: Response) => {
 
 // POST /api/auth/logout
 router.post('/logout', (_req: Request, res: Response) => {
-  res.clearCookie('refreshToken')
+  res.clearCookie('refreshToken', { httpOnly: true, secure: true, sameSite: 'none' })
   res.json({ message: 'Logged out' })
 })
 
