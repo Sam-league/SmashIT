@@ -8,6 +8,7 @@ export interface IUser extends Document {
   currentStreak: number
   bestStreak:    number
   fcmToken?:     string
+  utcOffset:     number  // minutes ahead of UTC (e.g. IST = 330)
   createdAt:     Date
 }
 
@@ -20,10 +21,10 @@ const UserSchema = new Schema<IUser>(
     currentStreak: { type: Number, default: 0 },
     bestStreak:    { type: Number, default: 0 },
     fcmToken:      { type: String },
+    utcOffset:     { type: Number, default: 0 },
   },
   { timestamps: true }
 )
 
-UserSchema.index({ email: 1 })
 
 export default mongoose.model<IUser>('User', UserSchema)

@@ -35,8 +35,13 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-syne), 'Syne', sans-serif;
     font-weight: 700;
+    font-stretch: 100%;
+  }
+
+  .font-syne {
+    font-stretch: 100%;
   }
 }
 

@@ -1,110 +1,128 @@
 import cron from 'node-cron'
 import Task from '../models/Task'
 import TaskLog from '../models/TaskLog'
-import User from '../models/User'
+import User, { IUser } from '../models/User'
 import { awardPoints, resetStreak, POINTS_MISSED } from '../services/pointsService'
 import { sendPushNotification } from '../services/notificationService'
+import { getUserMidnight, getUserYesterday } from '../services/dateUtils'
 
-export function startMissedTasksCron() {
-  // Runs at 00:01 every night
-  cron.schedule('1 0 * * *', async () => {
-    console.log('Running missed tasks cron job...')
+async function processMissedTasksForUser(userId: string, fcmToken: string, utcOffset: number) {
+  const { start, end } = getUserYesterday(utcOffset)
 
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
+  // Handle daily tasks
+  const dailyTasks = await Task.find({ type: 'daily', userId })
 
-    try {
-      // Handle daily tasks
-      const dailyTasks = await Task.find({ type: 'daily' })
+  for (const task of dailyTasks) {
+    const completedYesterday = await TaskLog.findOne({
+      taskId: task._id,
+      userId: task.userId,
+      date: { $gte: start, $lt: end },
+      status: 'completed',
+    })
 
-      for (const task of dailyTasks) {
-        const completedToday = await TaskLog.findOne({
+    if (!completedYesterday) {
+      const alreadyMissed = await TaskLog.findOne({
+        taskId: task._id,
+        userId: task.userId,
+        date: { $gte: start, $lt: end },
+        status: 'missed',
+      })
+
+      if (!alreadyMissed) {
+        const penalty = -(task.penalty ?? 5)
+        await TaskLog.create({
           taskId: task._id,
           userId: task.userId,
-          date: { $gte: today, $lt: tomorrow },
+          date:   start,
+          status: 'missed',
+          points: penalty,
+        })
+
+        await awardPoints(task.userId.toString(), penalty)
+
+        const anyCompletedYesterday = await TaskLog.findOne({
+          userId: task.userId,
+          date:   { $gte: start, $lt: end },
           status: 'completed',
         })
 
-        if (!completedToday) {
-          const alreadyMissed = await TaskLog.findOne({
-            taskId: task._id,
-            userId: task.userId,
-            date: { $gte: today, $lt: tomorrow },
-            status: 'missed',
-          })
-
-          if (!alreadyMissed) {
-            await TaskLog.create({
-              taskId: task._id,
-              userId: task.userId,
-              date:   today,
-              status: 'missed',
-              points: POINTS_MISSED,
-            })
-
-            await awardPoints(task.userId.toString(), POINTS_MISSED)
-
-            // Check if user had any completed tasks today before resetting
-            const anyCompletedToday = await TaskLog.findOne({
-              userId: task.userId,
-              date:   { $gte: today, $lt: tomorrow },
-              status: 'completed',
-            })
-
-            if (!anyCompletedToday) {
-              await resetStreak(task.userId.toString())
-            }
-
-            // Send push notification
-            const user = await User.findById(task.userId).select('fcmToken')
-            await sendPushNotification(
-              task.userId.toString(),
-              user?.fcmToken ?? '',
-              'Missed Task',
-              `You missed "${task.title}" today. -5 points`
-            )
-          }
+        if (!anyCompletedYesterday) {
+          await resetStreak(task.userId.toString())
         }
-      }
 
-      // Handle scheduled tasks that are overdue
-      const overdueTasks = await Task.find({
-        type: 'scheduled',
-        dueDate: { $lt: today },
+        await sendPushNotification(
+          task.userId.toString(),
+          fcmToken,
+          'Missed Task',
+          `You missed "${task.title}" yesterday. -5 points`
+        )
+      }
+    }
+  }
+
+  // Handle overdue scheduled tasks (dueDate is before user's today start)
+  const { start: todayStart } = getUserMidnight(utcOffset)
+  const overdueTasks = await Task.find({
+    type:    'scheduled',
+    userId,
+    dueDate: { $lt: todayStart },
+  })
+
+  for (const task of overdueTasks) {
+    const alreadyLogged = await TaskLog.findOne({
+      taskId: task._id,
+      userId: task.userId,
+    })
+
+    if (!alreadyLogged) {
+      const penalty = -(task.penalty ?? 5)
+      await TaskLog.create({
+        taskId: task._id,
+        userId: task.userId,
+        date:   task.dueDate ?? start,
+        status: 'missed',
+        points: penalty,
       })
 
-      for (const task of overdueTasks) {
-        const alreadyLogged = await TaskLog.findOne({
-          taskId: task._id,
-          userId: task.userId,
-        })
+      await awardPoints(task.userId.toString(), penalty)
 
-        if (!alreadyLogged) {
-          await TaskLog.create({
-            taskId: task._id,
-            userId: task.userId,
-            date:   task.dueDate ?? today,
-            status: 'missed',
-            points: POINTS_MISSED,
-          })
+      await sendPushNotification(
+        task.userId.toString(),
+        fcmToken,
+        'Missed Task',
+        `You missed "${task.title}". -5 points`
+      )
+    }
+  }
+}
 
-          await awardPoints(task.userId.toString(), POINTS_MISSED)
+export function startMissedTasksCron() {
+  // Run every minute; for each user, trigger at their local 00:01
+  cron.schedule('* * * * *', async () => {
+    const now = new Date()
 
-          const user = await User.findById(task.userId).select('fcmToken')
-          await sendPushNotification(
-            task.userId.toString(),
-            user?.fcmToken ?? '',
-            'Missed Task',
-            `You missed "${task.title}". -5 points`
+    try {
+      const users = await User.find({}).select('_id fcmToken utcOffset') as (IUser & { utcOffset: number })[]
+
+      for (const user of users) {
+        const offset = user.utcOffset ?? 0
+        // What hour:minute is it for this user right now?
+        const userLocal = new Date(now.getTime() + offset * 60_000)
+        const h = userLocal.getUTCHours()
+        const m = userLocal.getUTCMinutes()
+
+        if (h === 0 && m === 1) {
+          await processMissedTasksForUser(
+            user._id.toString(),
+            user.fcmToken ?? '',
+            offset
           )
         }
       }
-
-      console.log('Missed tasks cron job completed')
     } catch (err) {
       console.error('Missed tasks cron job failed:', err)
     }
   })
+
+  console.log('Missed tasks cron started (per-user timezone)')
 }

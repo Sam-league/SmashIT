@@ -8,13 +8,15 @@ const api = axios.create({
   },
 })
 
-// Attach access token from localStorage if present
+// Attach access token and user's UTC offset with every request
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem('accessToken')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+    // Send minutes-ahead-of-UTC (e.g. IST = +330, EST = -300)
+    config.headers['x-utc-offset'] = String(-new Date().getTimezoneOffset())
   }
   return config
 })

@@ -3,6 +3,7 @@ import Task from '../models/Task'
 import TaskLog from '../models/TaskLog'
 import { requireAuth, AuthRequest } from '../middleware/auth'
 import { completeTask } from '../services/taskService'
+import { getUserMidnight } from '../services/dateUtils'
 
 const router = Router()
 router.use(requireAuth)
@@ -20,7 +21,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 // POST /api/tasks
 router.post('/', async (req: AuthRequest, res: Response) => {
   try {
-    const { title, type, dueDate, reminderTime } = req.body
+    const { title, type, dueDate, reminderTime, points, penalty } = req.body
     if (!title || !type) {
       res.status(400).json({ message: 'title and type are required' })
       return
@@ -31,6 +32,8 @@ router.post('/', async (req: AuthRequest, res: Response) => {
       type,
       dueDate:      dueDate ?? undefined,
       reminderTime: reminderTime ?? '09:00',
+      points:       typeof points  === 'number' && points  > 0 ? points  : 10,
+      penalty:      typeof penalty === 'number' && penalty > 0 ? penalty : 5,
     })
     res.status(201).json(task)
   } catch {
@@ -41,15 +44,12 @@ router.post('/', async (req: AuthRequest, res: Response) => {
 // GET /api/tasks/today — returns all tasks enriched with today's log status
 router.get('/today', async (req: AuthRequest, res: Response) => {
   try {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
+    const { start, end } = getUserMidnight(req.utcOffset ?? 0)
 
     const tasks = await Task.find({ userId: req.userId }).sort({ createdAt: -1 })
     const logs = await TaskLog.find({
       userId: req.userId,
-      date: { $gte: today, $lt: tomorrow },
+      date: { $gte: start, $lt: end },
     })
 
     const logMap = new Map(logs.map((l) => [l.taskId.toString(), l]))
@@ -124,7 +124,7 @@ router.post('/:id/complete', async (req: AuthRequest, res: Response) => {
       res.status(404).json({ message: 'Task not found' })
       return
     }
-    const log = await completeTask(req.params.id, req.userId!)
+    const log = await completeTask(req.params.id, req.userId!, req.utcOffset ?? 0)
     res.json({ log, points: 10 })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Failed to complete task'

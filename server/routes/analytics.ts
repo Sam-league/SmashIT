@@ -9,7 +9,7 @@ router.use(requireAuth)
 router.get('/daily', async (req: AuthRequest, res: Response) => {
   try {
     const days = parseInt(req.query.days as string) || 7
-    const data = await getDailyPoints(req.userId!, days)
+    const data = await getDailyPoints(req.userId!, days, req.utcOffset ?? 0)
     res.json(data)
   } catch {
     res.status(500).json({ message: 'Failed to fetch analytics' })

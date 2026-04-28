@@ -8,7 +8,12 @@ router.use(requireAuth)
 // GET /api/users/me
 router.get('/me', async (req: AuthRequest, res: Response) => {
   try {
-    const user = await User.findById(req.userId).select('-password')
+    // Keep utcOffset in sync with the client's current timezone
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      { utcOffset: req.utcOffset ?? 0 },
+      { new: true }
+    ).select('-password')
     if (!user) {
       res.status(404).json({ message: 'User not found' })
       return

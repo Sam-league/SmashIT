@@ -15,6 +15,8 @@ export default function CreateTaskPage() {
   const [reminderTime, setReminderTime] = useState('06:00')
   const [dueDate,      setDueDate]      = useState('')
   const [reminder,     setReminder]     = useState(true)
+  const [points,       setPoints]       = useState(10)
+  const [penalty,      setPenalty]      = useState(5)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,6 +27,8 @@ export default function CreateTaskPage() {
         type,
         reminderTime,
         dueDate: type === 'scheduled' ? dueDate || undefined : undefined,
+        points,
+        penalty,
       },
       { onSuccess: () => router.push('/tasks') }
     )
@@ -164,17 +168,39 @@ export default function CreateTaskPage() {
             </button>
           </div>
 
-          {/* Points preview */}
+          {/* Points */}
           <div className="flex flex-col gap-1.5">
             <label className="font-syne text-[10px] font-bold tracking-[0.15em] uppercase text-dark">
               Points
             </label>
             <div className="flex gap-2">
-              <div className="flex-1 py-2.5 px-3 rounded-card border border-[#c8e6c9] bg-success-lt flex items-center gap-1.5 text-[12px] font-bold text-success">
-                ✓ Complete <strong>+10 pts</strong>
+              <div className="flex-1 flex flex-col gap-1">
+                <span className="text-[10px] font-semibold text-success">✓ Complete</span>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[12px] font-bold text-success pointer-events-none">+</span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={999}
+                    value={points}
+                    onChange={(e) => setPoints(Math.max(1, parseInt(e.target.value) || 10))}
+                    className="w-full pl-6 pr-3 py-2.5 bg-success-lt border border-[#c8e6c9] rounded-card font-syne text-[13px] font-bold text-success outline-none focus:border-success transition-colors"
+                  />
+                </div>
               </div>
-              <div className="flex-1 py-2.5 px-3 rounded-card border border-[#ffcdd2] bg-[#ffebee] flex items-center gap-1.5 text-[12px] font-bold text-error">
-                ✕ Miss <strong>−5 pts</strong>
+              <div className="flex-1 flex flex-col gap-1">
+                <span className="text-[10px] font-semibold text-error">✕ Miss penalty</span>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[12px] font-bold text-error pointer-events-none">−</span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={999}
+                    value={penalty}
+                    onChange={(e) => setPenalty(Math.max(0, parseInt(e.target.value) || 5))}
+                    className="w-full pl-6 pr-3 py-2.5 bg-[#ffebee] border border-[#ffcdd2] rounded-card font-syne text-[13px] font-bold text-error outline-none focus:border-error transition-colors"
+                  />
+                </div>
               </div>
             </div>
           </div>

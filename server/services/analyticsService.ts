@@ -1,28 +1,31 @@
 import TaskLog from '../models/TaskLog'
 import User from '../models/User'
+import { getUserMidnight } from './dateUtils'
 
-export async function getDailyPoints(userId: string, days: number) {
-  const since = new Date()
-  since.setDate(since.getDate() - days)
+export async function getDailyPoints(userId: string, days: number, utcOffset = 0) {
+  const { start: todayStart } = getUserMidnight(utcOffset)
+  // Fetch from (days) local days ago
+  const since = new Date(todayStart.getTime() - (days - 1) * 86_400_000)
 
   const logs = await TaskLog.find({
     userId,
     date: { $gte: since },
   }).sort({ date: 1 })
 
-  // Group by date string
+  // Group by user's local date
   const map = new Map<string, number>()
   for (const log of logs) {
-    const key = log.date.toISOString().slice(0, 10)
+    const localDate = new Date(log.date.getTime() + utcOffset * 60_000)
+    const key = localDate.toISOString().slice(0, 10)
     map.set(key, (map.get(key) ?? 0) + log.points)
   }
 
-  // Fill all days including zeroes
+  // Fill all local days including zeroes
   const result = []
   for (let i = days - 1; i >= 0; i--) {
-    const d = new Date()
-    d.setDate(d.getDate() - i)
-    const key = d.toISOString().slice(0, 10)
+    const dayStart = new Date(todayStart.getTime() - i * 86_400_000)
+    const localDate = new Date(dayStart.getTime() + utcOffset * 60_000)
+    const key = localDate.toISOString().slice(0, 10)
     result.push({ date: key, points: map.get(key) ?? 0 })
   }
 

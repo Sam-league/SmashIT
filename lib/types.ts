@@ -20,6 +20,8 @@ export interface Task {
   type:         TaskType
   dueDate?:     string
   reminderTime: string
+  points:       number
+  penalty:      number
   createdAt:    string
 }
 
