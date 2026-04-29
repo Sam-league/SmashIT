@@ -26,8 +26,8 @@ const config: Config = {
         'blue-lt':   '#eff6ff',
       },
       fontFamily: {
-        syne:      ['var(--font-syne)', 'sans-serif'],
-        'dm-sans': ['var(--font-dm-sans)', 'sans-serif'],
+        syne:      ['Syne', 'sans-serif'],
+        'dm-sans': ['DM Sans', 'sans-serif'],
       },
       borderRadius: {
         card:  '14px',
