@@ -1,6 +1,7 @@
 import User from '../models/User'
 import TaskLog from '../models/TaskLog'
 import UserAchievement from '../models/UserAchievement'
+import { sendPushNotification } from './notificationService'
 
 interface AchievementDef {
   id:          string
@@ -84,6 +85,8 @@ export async function checkAndGrantAchievements(userId: string): Promise<string[
 
   const newlyUnlocked: string[] = []
 
+  const user = await User.findById(userId).select('fcmToken')
+
   for (const achievement of ACHIEVEMENTS) {
     if (existingNames.has(achievement.id)) continue
     const earned = await achievement.check(userId)
@@ -94,6 +97,13 @@ export async function checkAndGrantAchievements(userId: string): Promise<string[
         dateUnlocked: new Date(),
       })
       newlyUnlocked.push(achievement.id)
+
+      await sendPushNotification(
+        userId,
+        user?.fcmToken ?? '',
+        `Achievement Unlocked: ${achievement.name}`,
+        `${achievement.icon} ${achievement.description}`
+      )
     }
   }
 

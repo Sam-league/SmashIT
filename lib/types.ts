@@ -18,8 +18,8 @@ export interface Task {
   userId:       string
   title:        string
   type:         TaskType
-  dueDate?:     string
-  reminderTime: string
+  dueDate?:      string
+  reminderTimes: string[]
   points:       number
   penalty:      number
   createdAt:    string

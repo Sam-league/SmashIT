@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, PenLine, Clock, CalendarDays, Bell, ArrowRight } from 'lucide-react'
+import { ArrowLeft, PenLine, Clock, CalendarDays, Bell, ArrowRight, Plus, X } from 'lucide-react'
 import { useCreateTask } from '@/hooks/useTasks'
 import type { TaskType } from '@/lib/types'
 
@@ -10,13 +10,24 @@ export default function CreateTaskPage() {
   const router = useRouter()
   const { mutate: createTask, isPending, error } = useCreateTask()
 
-  const [title,        setTitle]        = useState('')
-  const [type,         setType]         = useState<TaskType>('daily')
-  const [reminderTime, setReminderTime] = useState('06:00')
-  const [dueDate,      setDueDate]      = useState('')
-  const [reminder,     setReminder]     = useState(true)
-  const [points,       setPoints]       = useState(10)
-  const [penalty,      setPenalty]      = useState(5)
+  const [title,         setTitle]         = useState('')
+  const [type,          setType]          = useState<TaskType>('daily')
+  const [reminderTimes, setReminderTimes] = useState<string[]>(['09:00'])
+  const [dueDate,       setDueDate]       = useState('')
+  const [points,        setPoints]        = useState(10)
+  const [penalty,       setPenalty]       = useState(5)
+
+  function addTime() {
+    setReminderTimes((prev) => [...prev, '09:00'])
+  }
+
+  function removeTime(idx: number) {
+    setReminderTimes((prev) => prev.filter((_, i) => i !== idx))
+  }
+
+  function updateTime(idx: number, val: string) {
+    setReminderTimes((prev) => prev.map((t, i) => (i === idx ? val : t)))
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,7 +36,7 @@ export default function CreateTaskPage() {
       {
         title: title.trim(),
         type,
-        reminderTime,
+        reminderTimes,
         dueDate: type === 'scheduled' ? dueDate || undefined : undefined,
         points,
         penalty,
@@ -91,17 +102,11 @@ export default function CreateTaskPage() {
                   type="button"
                   onClick={() => setType(t)}
                   className={`flex-1 py-3 rounded-card border-[1.5px] flex flex-col items-center gap-1 transition-colors ${
-                    type === t
-                      ? 'border-accent bg-accent-lt'
-                      : 'border-border bg-surface'
+                    type === t ? 'border-accent bg-accent-lt' : 'border-border bg-surface'
                   }`}
                 >
                   <span className="text-[20px]">{t === 'daily' ? '🔁' : '📅'}</span>
-                  <span
-                    className={`font-syne text-[11px] font-bold tracking-[0.04em] capitalize ${
-                      type === t ? 'text-accent' : 'text-muted'
-                    }`}
-                  >
+                  <span className={`font-syne text-[11px] font-bold tracking-[0.04em] capitalize ${type === t ? 'text-accent' : 'text-muted'}`}>
                     {t}
                   </span>
                 </button>
@@ -109,20 +114,55 @@ export default function CreateTaskPage() {
             </div>
           </div>
 
-          {/* Reminder Time */}
+          {/* Reminder Times */}
           <div className="flex flex-col gap-1.5">
-            <label className="font-syne text-[10px] font-bold tracking-[0.15em] uppercase text-dark">
-              Reminder Time
-            </label>
-            <div className="relative">
-              <Clock size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
-              <input
-                type="time"
-                value={reminderTime}
-                onChange={(e) => setReminderTime(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-surface border-[1.5px] border-border rounded-input font-dm-sans text-[13px] text-dark outline-none focus:border-accent transition-colors"
-              />
+            <div className="flex items-center justify-between">
+              <label className="font-syne text-[10px] font-bold tracking-[0.15em] uppercase text-dark flex items-center gap-1.5">
+                <Bell size={11} />
+                {type === 'daily' ? 'Reminder Times' : 'Reminder Time'}
+              </label>
+              {type === 'daily' && (
+                <button
+                  type="button"
+                  onClick={addTime}
+                  className="flex items-center gap-1 text-[10px] font-bold text-accent"
+                >
+                  <Plus size={11} strokeWidth={2.5} />
+                  Add time
+                </button>
+              )}
             </div>
+
+            <div className="flex flex-col gap-2">
+              {reminderTimes.map((t, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <Clock size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+                    <input
+                      type="time"
+                      value={t}
+                      onChange={(e) => updateTime(idx, e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 bg-surface border-[1.5px] border-border rounded-input font-dm-sans text-[13px] text-dark outline-none focus:border-accent transition-colors"
+                    />
+                  </div>
+                  {type === 'daily' && reminderTimes.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeTime(idx)}
+                      className="w-8 h-8 rounded-[10px] bg-[#ffebee] flex items-center justify-center flex-shrink-0"
+                    >
+                      <X size={13} className="text-error" />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <p className="text-[10px] text-muted">
+              {type === 'daily'
+                ? "You'll get a push reminder at each time — only if the task isn't done yet."
+                : "You'll get a reminder at this time on the due date."}
+            </p>
           </div>
 
           {/* Due Date (scheduled only) */}
@@ -143,30 +183,6 @@ export default function CreateTaskPage() {
               </div>
             </div>
           )}
-
-          {/* Push Reminder toggle */}
-          <div className="bg-surface border border-border rounded-card p-3.5 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <Bell size={18} className="text-muted" strokeWidth={1.8} />
-              <div>
-                <p className="text-[12px] font-semibold text-dark">Push Reminder</p>
-                <p className="text-[10px] text-muted">Get notified before deadline</p>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => setReminder(!reminder)}
-              className={`w-9 h-5 rounded-full relative transition-colors flex-shrink-0 ${
-                reminder ? 'bg-accent' : 'bg-border'
-              }`}
-            >
-              <span
-                className={`absolute top-[3px] w-3.5 h-3.5 bg-white rounded-full transition-all ${
-                  reminder ? 'right-[3px]' : 'left-[3px]'
-                }`}
-              />
-            </button>
-          </div>
 
           {/* Points */}
           <div className="flex flex-col gap-1.5">

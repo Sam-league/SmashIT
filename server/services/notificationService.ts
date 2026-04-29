@@ -12,17 +12,21 @@ function initFirebaseAdmin(): boolean {
 
   initAttempted = true
 
-  const key = process.env.FIREBASE_ADMIN_SDK_KEY
-  if (!key) {
-    console.warn('FIREBASE_ADMIN_SDK_KEY not set — push notifications disabled')
+  const projectId   = process.env.FIREBASE_PROJECT_ID
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL
+  const privateKey  = process.env.FIREBASE_PRIVATE_KEY
+
+  if (!projectId || !clientEmail || !privateKey) {
+    console.warn('Firebase env vars not set (FIREBASE_PROJECT_ID / FIREBASE_CLIENT_EMAIL / FIREBASE_PRIVATE_KEY) — push notifications disabled')
     return false
   }
 
   try {
-    // Railway (and many CI systems) store \n as literal \\n in env vars
-    const normalized = key.replace(/\\n/g, '\n')
-    const serviceAccount = JSON.parse(normalized) as admin.ServiceAccount
-    admin.initializeApp({ credential: admin.credential.cert(serviceAccount) })
+    // Railway stores \n as literal \\n — convert back to real newlines
+    const normalizedKey = privateKey.replace(/\\n/g, '\n')
+    admin.initializeApp({
+      credential: admin.credential.cert({ projectId, clientEmail, privateKey: normalizedKey }),
+    })
     console.log('Firebase Admin SDK initialized')
     return true
   } catch (err) {

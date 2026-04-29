@@ -27,4 +27,18 @@ router.post('/read', async (req: AuthRequest, res: Response) => {
   }
 })
 
+// POST /api/notifications/test — creates a test notification for debugging
+router.post('/test', async (req: AuthRequest, res: Response) => {
+  try {
+    const notif = await Notification.create({
+      userId: req.userId,
+      title:  'Test Notification',
+      body:   'If you see this, DB notifications are working.',
+    })
+    res.json(notif)
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to create test notification', error: String(err) })
+  }
+})
+
 export default router

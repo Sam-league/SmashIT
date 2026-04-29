@@ -13,6 +13,7 @@ import notificationRoutes from './routes/notifications'
 import achievementRoutes from './routes/achievements'
 import { errorHandler } from './middleware/errorHandler'
 import { startMissedTasksCron } from './jobs/missedTasksCron'
+import { startReminderCron } from './jobs/reminderCron'
 
 dotenv.config()
 
@@ -62,6 +63,7 @@ connectDB().then(() => {
     console.log(`Server running on port ${PORT}`)
   })
   startMissedTasksCron()
+  startReminderCron()
 })
 
 export default app

@@ -21,19 +21,22 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 // POST /api/tasks
 router.post('/', async (req: AuthRequest, res: Response) => {
   try {
-    const { title, type, dueDate, reminderTime, points, penalty } = req.body
+    const { title, type, dueDate, reminderTimes, points, penalty } = req.body
     if (!title || !type) {
       res.status(400).json({ message: 'title and type are required' })
       return
     }
+    const times = Array.isArray(reminderTimes) && reminderTimes.length > 0
+      ? reminderTimes
+      : ['09:00']
     const task = await Task.create({
       userId: req.userId,
       title,
       type,
-      dueDate:      dueDate ?? undefined,
-      reminderTime: reminderTime ?? '09:00',
-      points:       typeof points  === 'number' && points  > 0 ? points  : 10,
-      penalty:      typeof penalty === 'number' && penalty > 0 ? penalty : 5,
+      dueDate:       dueDate ?? undefined,
+      reminderTimes: times,
+      points:        typeof points  === 'number' && points  > 0 ? points  : 10,
+      penalty:       typeof penalty === 'number' && penalty > 0 ? penalty : 5,
     })
     res.status(201).json(task)
   } catch {
