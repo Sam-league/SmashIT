@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -39,7 +39,7 @@ export default function TasksPage() {
 
         {/* Header */}
         <div className="flex justify-between items-center">
-          <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-tight">My Tasks</h1>
+          <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-normal">My Tasks</h1>
           <button
             onClick={() => router.push('/tasks/create')}
             className="w-[34px] h-[34px] rounded-[10px] bg-accent flex items-center justify-center"

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -204,7 +204,7 @@ function CompeteSlide({ onRegister, onLogin }: { onRegister: () => void; onLogin
 
       {/* Content */}
       <div className="relative z-10 pb-10">
-        <h2 className="font-syne text-[28px] font-extrabold text-dark tracking-tight leading-[1.15] mb-2">
+        <h2 className="font-syne text-[28px] font-extrabold text-dark tracking-normal leading-[1.15] mb-2">
           Compete with<br /><span className="text-accent">your friends.</span>
         </h2>
         <p className="text-[13px] text-muted leading-relaxed mb-6">

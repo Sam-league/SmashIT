@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -77,7 +77,7 @@ export default function NotificationsPage() {
             >
               <ArrowLeft size={14} className="text-dark" />
             </button>
-            <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-tight">Notifications</h1>
+            <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-normal">Notifications</h1>
           </div>
           {unreadCount > 0 && (
             <button

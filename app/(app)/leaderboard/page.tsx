@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/authStore'
@@ -25,7 +25,7 @@ export default function LeaderboardPage() {
       <div className="px-[18px] pt-[14px] flex flex-col gap-3.5">
 
         <div className="flex items-center justify-between">
-          <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-tight">Leaderboard</h1>
+          <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-normal">Leaderboard</h1>
           <span className="text-[11px] text-muted font-semibold">All Time</span>
         </div>
 

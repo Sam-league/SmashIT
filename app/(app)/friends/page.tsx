@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -90,7 +90,7 @@ export default function FriendsPage() {
 
         {/* Header */}
         <div className="flex justify-between items-center">
-          <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-tight">Friends</h1>
+          <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-normal">Friends</h1>
         </div>
 
         {/* Search */}

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -53,7 +53,7 @@ export default function AchievementsPage() {
           >
             <ArrowLeft size={14} className="text-dark" />
           </button>
-          <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-tight">Achievements</h1>
+          <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-normal">Achievements</h1>
         </div>
 
         {/* Progress card */}
@@ -78,7 +78,7 @@ export default function AchievementsPage() {
           )}
 
           <div className="relative z-10">
-            <p className="font-syne text-[15px] font-extrabold text-white tracking-tight">
+            <p className="font-syne text-[15px] font-extrabold text-white tracking-normal">
               {unlocked.length} Unlocked
             </p>
             <p className="text-[11px] text-white/40 mt-0.5">

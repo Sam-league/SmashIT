@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -130,7 +130,7 @@ export default function DashboardPage() {
         <div className="flex justify-between items-center">
           <div>
             <p className="text-[11px] text-muted font-medium tracking-[0.03em]">{formatDate()}</p>
-            <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-tight leading-tight">
+            <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-normal leading-tight">
               {getGreeting()}, <span className="text-accent">{firstName}</span> 👋
             </h1>
           </div>

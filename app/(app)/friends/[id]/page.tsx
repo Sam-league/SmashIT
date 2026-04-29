@@ -84,7 +84,7 @@ export default function FriendProfilePage() {
             <span className="absolute bottom-0.5 right-0.5 w-3 h-3 rounded-full bg-success border-2 border-dark" />
           </div>
           <div>
-            <h1 className="font-syne text-[20px] font-extrabold text-white tracking-tight leading-tight">
+            <h1 className="font-syne text-[20px] font-extrabold text-white tracking-normal leading-tight">
               {friend.name}
             </h1>
             <p className="text-[11px] text-white/40 mt-0.5">@{friend.name.toLowerCase().replace(/\s+/g, '')}</p>

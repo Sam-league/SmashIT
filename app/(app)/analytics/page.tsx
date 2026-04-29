@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useAuthStore } from '@/store/authStore'
@@ -46,7 +46,7 @@ export default function AnalyticsPage() {
         {/* Header */}
         <div className="flex items-end justify-between">
           <div>
-            <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-tight">Analytics</h1>
+            <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-normal">Analytics</h1>
             <p className="text-[11px] text-muted mt-0.5">Your productivity breakdown</p>
           </div>
           <div className="flex bg-surface border border-border rounded-full p-[3px] gap-0.5">
@@ -68,23 +68,23 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-2 gap-2.5">
           <div className="bg-dark border border-dark rounded-card p-[14px_12px] shadow-card">
             <span className="text-xl mb-2 block">⚡</span>
-            <div className="font-syne text-[26px] font-extrabold text-accent tracking-tight leading-none">{totalPts}</div>
+            <div className="font-syne text-[26px] font-extrabold text-accent tracking-normal leading-none">{totalPts}</div>
             <div className="text-[10px] text-white/40 font-medium uppercase tracking-wider mt-1">Total Points</div>
           </div>
           <div className="bg-surface border border-border rounded-card p-[14px_12px] shadow-card">
             <span className="text-xl mb-2 block">🔥</span>
-            <div className="font-syne text-[26px] font-extrabold text-dark tracking-tight leading-none">{streak}</div>
+            <div className="font-syne text-[26px] font-extrabold text-dark tracking-normal leading-none">{streak}</div>
             <div className="text-[10px] text-muted font-medium uppercase tracking-wider mt-1">Day Streak</div>
             {bestStreak > 0 && <div className="text-[10px] text-success font-semibold mt-0.5">↑ Best: {bestStreak}</div>}
           </div>
           <div className="bg-surface border border-border rounded-card p-[14px_12px] shadow-card">
             <span className="text-xl mb-2 block">✅</span>
-            <div className="font-syne text-[26px] font-extrabold text-dark tracking-tight leading-none">{completed}</div>
+            <div className="font-syne text-[26px] font-extrabold text-dark tracking-normal leading-none">{completed}</div>
             <div className="text-[10px] text-muted font-medium uppercase tracking-wider mt-1">Completed</div>
           </div>
           <div className="bg-accent border border-accent rounded-card p-[14px_12px] shadow-card">
             <span className="text-xl mb-2 block">📈</span>
-            <div className="font-syne text-[26px] font-extrabold text-white tracking-tight leading-none">{rate}%</div>
+            <div className="font-syne text-[26px] font-extrabold text-white tracking-normal leading-none">{rate}%</div>
             <div className="text-[10px] text-white/70 font-medium uppercase tracking-wider mt-1">Rate</div>
           </div>
         </div>
@@ -102,7 +102,7 @@ export default function AnalyticsPage() {
           </div>
 
           <div className="flex items-end gap-2 mb-3">
-            <span className="font-syne text-[36px] font-extrabold text-dark leading-none tracking-tight">
+            <span className="font-syne text-[36px] font-extrabold text-dark leading-none tracking-normal">
               {weeklyTotal} <span className="text-[18px] text-accent">pts</span>
             </span>
           </div>

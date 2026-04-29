@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
@@ -88,7 +88,7 @@ export default function ProfilePage() {
             🙋
           </div>
           <div>
-            <h1 className="font-syne text-[18px] font-extrabold text-white tracking-tight leading-tight">
+            <h1 className="font-syne text-[18px] font-extrabold text-white tracking-normal leading-tight">
               {user?.name ?? '—'}
             </h1>
             <p className="text-[11px] text-white/40 mt-0.5">{user?.email}</p>

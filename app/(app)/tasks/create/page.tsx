@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -61,7 +61,7 @@ export default function CreateTaskPage() {
           >
             <ArrowLeft size={15} className="text-dark" strokeWidth={2} />
           </button>
-          <h1 className="font-syne text-[20px] font-extrabold text-dark tracking-tight">New Task</h1>
+          <h1 className="font-syne text-[20px] font-extrabold text-dark tracking-normal">New Task</h1>
         </div>
 
         {errorMsg && (

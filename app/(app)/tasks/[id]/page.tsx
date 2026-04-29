@@ -129,7 +129,7 @@ export default function TaskDetailPage() {
         </div>
 
         {/* title */}
-        <h1 className="font-syne text-[22px] font-extrabold text-white tracking-tight leading-snug mb-3">
+        <h1 className="font-syne text-[22px] font-extrabold text-white tracking-normal leading-snug mb-3">
           {task.title}
         </h1>
 

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -102,7 +102,7 @@ export default function SettingsPage() {
           >
             <ArrowLeft size={14} className="text-dark" />
           </button>
-          <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-tight">Settings</h1>
+          <h1 className="font-syne text-[22px] font-extrabold text-dark tracking-normal">Settings</h1>
         </div>
 
         {/* Groups */}

@@ -1,4 +1,4 @@
-interface StatCardProps {
+﻿interface StatCardProps {
   icon: string
   value: string | number
   label: string
@@ -15,7 +15,7 @@ export default function StatCard({ icon, value, label, delta, dark = false }: St
     >
       <span className="text-lg mb-0.5">{icon}</span>
       <div
-        className={`font-syne text-[22px] font-extrabold leading-none tracking-tight ${
+        className={`font-syne text-[22px] font-extrabold leading-none tracking-normal ${
           dark ? 'text-accent' : 'text-dark'
         }`}
       >
