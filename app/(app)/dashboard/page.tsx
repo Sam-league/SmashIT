@@ -223,7 +223,7 @@ export default function DashboardPage() {
                   key={task._id}
                   task={task}
                   status={status}
-                  timeLabel={task.reminderTime}
+                  timeLabel={task.reminderTimes?.[0] ?? ''}
                   onClick={() => router.push(`/tasks/${task._id}`)}
                 />
               ))}

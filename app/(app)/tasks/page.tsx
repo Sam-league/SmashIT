@@ -99,7 +99,7 @@ export default function TasksPage() {
                     key={task._id}
                     task={task}
                     status={status}
-                    timeLabel={task.reminderTime}
+                    timeLabel={task.reminderTimes?.[0] ?? ''}
                     onClick={() => router.push(`/tasks/${task._id}`)}
                   />
                 ))}
@@ -143,7 +143,7 @@ export default function TasksPage() {
                       status={status}
                       timeLabel={task.type === 'scheduled' && task.dueDate
                         ? new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-                        : task.reminderTime}
+                        : task.reminderTimes?.[0] ?? ''}
                       onClick={() => router.push(`/tasks/${task._id}`)}
                     />
                   ))}
@@ -168,7 +168,7 @@ export default function TasksPage() {
                       key={task._id}
                       task={task}
                       status={status}
-                      timeLabel={task.reminderTime}
+                      timeLabel={task.reminderTimes?.[0] ?? ''}
                       onClick={() => router.push(`/tasks/${task._id}`)}
                     />
                   ))}

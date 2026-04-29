@@ -27,7 +27,7 @@ export default function TaskDetailPage() {
     if (!data) return
     setEditTitle(data.task.title)
     setEditType(data.task.type)
-    setEditReminder(data.task.reminderTime)
+    setEditReminder(data.task.reminderTimes?.[0] ?? '09:00')
     setEditDueDate(data.task.dueDate ? data.task.dueDate.slice(0, 10) : '')
     setEditPoints(data.task.points ?? 10)
     setEditPenalty(data.task.penalty ?? 5)
@@ -40,7 +40,7 @@ export default function TaskDetailPage() {
       {
         title:        editTitle.trim(),
         type:         editType,
-        reminderTime: editReminder,
+        reminderTimes: [editReminder],
         dueDate:      editType === 'scheduled' ? editDueDate || undefined : undefined,
         points:       editPoints,
         penalty:      editPenalty,
@@ -136,7 +136,7 @@ export default function TaskDetailPage() {
         {/* meta row */}
         <div className="flex items-center flex-wrap gap-3">
           <div className="flex items-center gap-1.5 text-[11px] text-white/40">
-            <Clock size={12} /> {task.reminderTime}
+            <Clock size={12} /> {task.reminderTimes?.join(', ') ?? ''}
           </div>
           <div className="flex items-center gap-1.5 text-[11px] text-white/40">
             <Bell size={12} /> Reminder on
