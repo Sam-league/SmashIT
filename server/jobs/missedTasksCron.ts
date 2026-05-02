@@ -54,7 +54,7 @@ async function processMissedTasksForUser(userId: string, fcmToken: string, utcOf
           task.userId.toString(),
           fcmToken,
           'Missed Task',
-          `You missed "${task.title}" yesterday. -5 points`
+          `You missed "${task.title}" yesterday. -${task.penalty ?? 5} points`
         )
       }
     }
@@ -90,7 +90,7 @@ async function processMissedTasksForUser(userId: string, fcmToken: string, utcOf
         task.userId.toString(),
         fcmToken,
         'Missed Task',
-        `You missed "${task.title}". -5 points`
+        `You missed "${task.title}". -${task.penalty ?? 5} points`
       )
     }
   }

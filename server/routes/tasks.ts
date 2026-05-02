@@ -128,7 +128,7 @@ router.post('/:id/complete', async (req: AuthRequest, res: Response) => {
       return
     }
     const log = await completeTask(req.params.id, req.userId!, req.utcOffset ?? 0)
-    res.json({ log, points: 10 })
+    res.json({ log, points: log.points })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Failed to complete task'
     res.status(400).json({ message })

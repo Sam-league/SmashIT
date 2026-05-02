@@ -23,8 +23,24 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'smashit-auth',
-      // Only persist user, not loading state
-      partialize: (state) => ({ user: state.user }),
+      // Only persist identity fields (name, email, _id) so the app can render
+      // the user's name/greeting instantly on refresh. Dynamic values like
+      // points and streak are intentionally excluded — they come from the
+      // server query and should never show a stale cached number.
+      partialize: (state) => ({
+        user: state.user
+          ? {
+              _id:       state.user._id,
+              name:      state.user.name,
+              email:     state.user.email,
+              // Zero-out dynamic fields — they'll be populated by the /me fetch
+              points:        0,
+              currentStreak: 0,
+              bestStreak:    0,
+              createdAt:     state.user.createdAt,
+            }
+          : null,
+      }),
     }
   )
 )

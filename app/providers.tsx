@@ -9,10 +9,15 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime:            5 * 60 * 1000,  // 5 min — avoid redundant refetches
-            gcTime:               10 * 60 * 1000, // 10 min cache retention
-            retry:                1,
-            refetchOnWindowFocus: false,           // don't refetch on every tab switch
+            // Show cached data instantly, refetch in background after 30s.
+            // This is the "stale-while-revalidate" pattern — no blank screens,
+            // no stale data hanging around for minutes.
+            staleTime:             30 * 1000,       // 30 seconds
+            gcTime:                5 * 60 * 1000,   // keep cache 5 min for background refetch
+            retry:                 1,
+            refetchOnWindowFocus:  true,            // refresh when user returns to tab
+            refetchOnReconnect:    true,            // refresh when network comes back
+            refetchOnMount:        true,            // always refetch stale data on mount
           },
         },
       })

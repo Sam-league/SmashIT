@@ -1,18 +1,19 @@
 'use client'
 
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/authStore'
-import { useAnalyticsSummary } from '@/hooks/usePoints'
 import api from '@/lib/api'
 import type { FriendUser } from '@/lib/types'
 
 export default function FriendProfilePage() {
-  const { id } = useParams<{ id: string }>()
-  const router  = useRouter()
-  const me      = useAuthStore((s) => s.user)
-  const { data: mySummary } = useAnalyticsSummary()
+  const { id }       = useParams<{ id: string }>()
+  const router       = useRouter()
+  const searchParams = useSearchParams()
+  const fid          = searchParams.get('fid')
+  const me           = useAuthStore((s) => s.user)
+  const qc           = useQueryClient()
 
   const { data: friend, isLoading } = useQuery({
     queryKey: ['user', id],
@@ -21,6 +22,14 @@ export default function FriendProfilePage() {
       return data
     },
     enabled: !!id,
+  })
+
+  const removeFriend = useMutation({
+    mutationFn: () => api.delete(`/api/friends/${fid}`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['friends'] })
+      router.push('/friends')
+    },
   })
 
   if (isLoading) {
@@ -69,10 +78,21 @@ export default function FriendProfilePage() {
             <ArrowLeft size={20} />
           </button>
           <div className="flex gap-2">
-            <button className="px-3 py-[5px] rounded-full bg-white/10 font-syne text-[10px] font-bold text-white">
-              Remove
-            </button>
-            <button className="px-3 py-[5px] rounded-full bg-accent font-syne text-[10px] font-bold text-white shadow-accent">
+            {fid && (
+              <button
+                onClick={() => {
+                  if (confirm(`Remove ${friend?.name} as a friend?`)) removeFriend.mutate()
+                }}
+                disabled={removeFriend.isPending}
+                className="px-3 py-[5px] rounded-full bg-white/10 font-syne text-[10px] font-bold text-white disabled:opacity-50 active:opacity-70"
+              >
+                {removeFriend.isPending ? '…' : 'Remove'}
+              </button>
+            )}
+            <button
+              onClick={() => alert('Challenge feature coming soon!')}
+              className="px-3 py-[5px] rounded-full bg-accent font-syne text-[10px] font-bold text-white shadow-accent"
+            >
               Challenge 🔥
             </button>
           </div>
@@ -94,9 +114,9 @@ export default function FriendProfilePage() {
         {/* Stats strip */}
         <div className="flex mt-4 bg-white/[0.06] rounded-[10px] overflow-hidden relative z-10">
           {[
-            { val: friend.points,         label: 'Points',  accent: true },
+            { val: friend.points,              label: 'Points', accent: true },
             { val: `🔥 ${friend.currentStreak}`, label: 'Streak' },
-            { val: `${mySummary?.completionRate ?? '—'}%`, label: 'Rate' },
+            { val: `⭐ ${friend.bestStreak ?? 0}`, label: 'Best' },
           ].map(({ val, label, accent }, i) => (
             <div
               key={label}

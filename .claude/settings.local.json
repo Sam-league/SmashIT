@@ -7,7 +7,12 @@
       "Bash(npx tsc:*)",
       "Bash(npm run:*)",
       "Bash(node:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(git -C \"C:\\\\Users\\\\Abhishek\\\\Desktop\\\\Projects\\\\SmashIT\\\\.claude\\\\worktrees\\\\intelligent-engelbart-a33688\" status)",
+      "Bash(git -C \"C:\\\\Users\\\\Abhishek\\\\Desktop\\\\Projects\\\\SmashIT\\\\.claude\\\\worktrees\\\\intelligent-engelbart-a33688\" branch)",
+      "Bash(git -C \"C:\\\\Users\\\\Abhishek\\\\Desktop\\\\Projects\\\\SmashIT\\\\.claude\\\\worktrees\\\\intelligent-engelbart-a33688\" add -A)",
+      "Bash(git -C 'C:\\\\Users\\\\Abhishek\\\\Desktop\\\\Projects\\\\SmashIT\\\\.claude\\\\worktrees\\\\intelligent-engelbart-a33688' commit -m ' *)",
+      "Bash(git config *)"
     ]
   }
 }

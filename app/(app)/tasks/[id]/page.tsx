@@ -212,7 +212,7 @@ export default function TaskDetailPage() {
                         isDone ? 'text-success' : 'text-error'
                       }`}
                     >
-                      {isDone ? '+10' : '−5'}
+                      {isDone ? `+${log.points}` : `−${Math.abs(log.points)}`}
                     </span>
                   </div>
                 )

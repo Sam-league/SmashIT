@@ -19,8 +19,6 @@ export default function TasksPage() {
     t.task.title.toLowerCase().includes(search.toLowerCase())
   )
 
-  const daily     = all.filter((t) => t.task.type === 'daily'     && filter !== 'Scheduled' && filter !== 'Completed' && filter !== 'Missed')
-  const scheduled = all.filter((t) => t.task.type === 'scheduled' && filter !== 'Daily'     && filter !== 'Completed' && filter !== 'Missed')
   const completed = all.filter((t) => t.status === 'completed')
   const missed    = all.filter((t) => t.status === 'missed')
 
@@ -94,11 +92,12 @@ export default function TasksPage() {
                 <span className="font-syne text-[10px] font-bold tracking-[0.15em] uppercase text-muted">
                   Daily · {dailyDone} of {dailySections.length}
                 </span>
-                {dailySections.map(({ task, status }) => (
+                {dailySections.map(({ task, status, points }) => (
                   <TaskCard
                     key={task._id}
                     task={task}
                     status={status}
+                    points={points}
                     timeLabel={task.reminderTimes?.[0] ?? ''}
                     onClick={() => router.push(`/tasks/${task._id}`)}
                   />
@@ -112,15 +111,16 @@ export default function TasksPage() {
                 <span className="font-syne text-[10px] font-bold tracking-[0.15em] uppercase text-muted">
                   Scheduled · {scheduledSections.filter((t) => t.status === 'pending').length} upcoming
                 </span>
-                {scheduledSections.map(({ task, status }) => {
+                {scheduledSections.map(({ task, status, points }) => {
                   const due = task.dueDate
-                    ? new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                    ? new Date(task.dueDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
                     : ''
                   return (
                     <TaskCard
                       key={task._id}
                       task={task}
                       status={status}
+                      points={points}
                       timeLabel={due}
                       onClick={() => router.push(`/tasks/${task._id}`)}
                     />
@@ -136,13 +136,14 @@ export default function TasksPage() {
                   <span className="font-syne text-[10px] font-bold tracking-[0.15em] uppercase text-muted">
                     Completed · {completed.length}
                   </span>
-                  {completed.map(({ task, status }) => (
+                  {completed.map(({ task, status, points }) => (
                     <TaskCard
                       key={task._id}
                       task={task}
                       status={status}
+                      points={points}
                       timeLabel={task.type === 'scheduled' && task.dueDate
-                        ? new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                        ? new Date(task.dueDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
                         : task.reminderTimes?.[0] ?? ''}
                       onClick={() => router.push(`/tasks/${task._id}`)}
                     />
@@ -163,11 +164,12 @@ export default function TasksPage() {
                   <span className="font-syne text-[10px] font-bold tracking-[0.15em] uppercase text-[#ef9a9a]">
                     Missed · {missed.length}
                   </span>
-                  {missed.map(({ task, status }) => (
+                  {missed.map(({ task, status, points }) => (
                     <TaskCard
                       key={task._id}
                       task={task}
                       status={status}
+                      points={points}
                       timeLabel={task.reminderTimes?.[0] ?? ''}
                       onClick={() => router.push(`/tasks/${task._id}`)}
                     />

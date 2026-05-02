@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import compression from 'compression'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 
@@ -21,6 +22,7 @@ const app = express()
 const PORT = process.env.PORT ?? 4000
 
 // Middleware
+app.use(compression())
 app.use(cors({
   origin:         process.env.CLIENT_URL ?? 'http://localhost:3000',
   credentials:    true,
@@ -28,6 +30,13 @@ app.use(cors({
 }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
+// Prevent browsers and proxies from caching API responses.
+// React Query handles its own caching on the client side.
+app.use('/api', (_req, res, next) => {
+  res.set('Cache-Control', 'no-store')
+  next()
+})
 
 // Routes
 app.use('/api/auth',          authRoutes)

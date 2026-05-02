@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
-import type { Task, TaskLog, TaskWithStatus } from '@/lib/types'
+import type { Task, TaskLog, TaskStatus, TaskWithStatus } from '@/lib/types'
 
 export function useTasks() {
   return useQuery({
@@ -83,7 +83,31 @@ export function useCompleteTask(id: string) {
       )
       return data
     },
-    onSuccess: () => {
+
+    // Instantly mark the task done in the UI before the server responds.
+    // If the server rejects it (e.g. already completed) we roll back.
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['tasks', 'today'] })
+      await queryClient.cancelQueries({ queryKey: ['tasks', id] })
+
+      const prevToday  = queryClient.getQueryData<TaskWithStatus[]>(['tasks', 'today'])
+      const prevDetail = queryClient.getQueryData<{ task: Task; logs: TaskLog[] }>(['tasks', id])
+
+      queryClient.setQueryData<TaskWithStatus[]>(['tasks', 'today'], (old) =>
+        old?.map((t) =>
+          t.task._id === id ? { ...t, status: 'completed' as TaskStatus } : t
+        )
+      )
+
+      return { prevToday, prevDetail }
+    },
+
+    onError: (_err, _vars, context) => {
+      if (context?.prevToday)  queryClient.setQueryData(['tasks', 'today'], context.prevToday)
+      if (context?.prevDetail) queryClient.setQueryData(['tasks', id],      context.prevDetail)
+    },
+
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] })
       queryClient.invalidateQueries({ queryKey: ['tasks', id] })
       queryClient.invalidateQueries({ queryKey: ['me'] })

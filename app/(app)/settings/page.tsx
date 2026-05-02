@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, ChevronRight } from 'lucide-react'
+import { ArrowLeft, ChevronRight, LogOut } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function SettingsPage() {
@@ -132,20 +132,20 @@ export default function SettingsPage() {
           </div>
         ))}
 
-        {/* Danger zone */}
+        {/* Sign out */}
         <div className="flex flex-col gap-2">
-          <span className="font-syne text-[9px] font-bold tracking-[0.18em] uppercase text-[#ef9a9a] pl-0.5">
-            Danger Zone
+          <span className="font-syne text-[9px] font-bold tracking-[0.18em] uppercase text-muted pl-0.5">
+            Account
           </span>
           <button
             onClick={logout}
-            className="flex items-center gap-2.5 bg-[#fff8f8] border border-[#ffd0d0] rounded-[12px] p-[12px_13px] shadow-card text-left active:opacity-80 transition-opacity"
+            className="flex items-center gap-2.5 bg-surface border border-border rounded-[12px] p-[12px_13px] shadow-card text-left active:opacity-80 transition-opacity"
           >
-            <div className="w-8 h-8 rounded-[9px] bg-[#ffebee] flex items-center justify-center text-[15px] flex-shrink-0">
-              🗑
+            <div className="w-8 h-8 rounded-[9px] bg-[#ffebee] flex items-center justify-center flex-shrink-0">
+              <LogOut size={15} className="text-error" />
             </div>
             <div className="flex-1">
-              <p className="text-[12px] font-semibold text-error">Delete Account</p>
+              <p className="text-[12px] font-semibold text-error">Sign Out</p>
             </div>
             <ChevronRight size={13} className="text-[#ef9a9a]" />
           </button>

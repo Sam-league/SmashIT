@@ -118,7 +118,7 @@ export default function AnalyticsPage() {
               {daily.map((d, i) => {
                 const isToday = i === daily.length - 1
                 const w = Math.max((d.points / maxPts) * 100, d.points > 0 ? 2 : 0)
-                const dayName = new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' })
+                const dayName = new Date(d.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' })
                 return (
                   <div key={d.date} className="flex items-center gap-2">
                     <span className="font-syne text-[10px] font-bold text-muted uppercase w-7 flex-shrink-0">{dayName}</span>

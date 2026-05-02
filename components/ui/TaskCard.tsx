@@ -61,13 +61,13 @@ export default function TaskCard({
   const isMissed    = status === 'missed'
   const isCompleted = status === 'completed'
 
-  const displayPoints = points ?? (status === 'completed' ? 10 : status === 'missed' ? -5 : 10)
   const ptsClass =
     status === 'completed' ? 'text-success' :
     status === 'missed'    ? 'text-error'   : 'text-muted'
   const ptsLabel =
-    status === 'completed' ? '+10' :
-    status === 'missed'    ? '−5'  : '+10'
+    status === 'missed'
+      ? `−${task.penalty ?? 5}`
+      : `+${task.points ?? 10}`
 
   return (
     <div

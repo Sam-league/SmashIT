@@ -1,6 +1,5 @@
 ﻿'use client'
 
-import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { useNotifications, useMarkNotificationsRead } from '@/hooks/useNotifications'

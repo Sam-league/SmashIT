@@ -51,7 +51,7 @@ function WeekChart({ data }: { data: { date: string; points: number }[] }) {
                 isToday ? 'text-accent' : 'text-muted'
               }`}
             >
-              {DAYS[(new Date(d.date).getDay() + 1) % 7]}
+              {DAYS[new Date(d.date + 'T12:00:00').getDay()]}
             </span>
           </div>
         )
@@ -218,11 +218,12 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="flex flex-col gap-2">
-              {dailyTasks.slice(0, 5).map(({ task, status }) => (
+              {dailyTasks.slice(0, 5).map(({ task, status, points }) => (
                 <TaskCard
                   key={task._id}
                   task={task}
                   status={status}
+                  points={points}
                   timeLabel={task.reminderTimes?.[0] ?? ''}
                   onClick={() => router.push(`/tasks/${task._id}`)}
                 />
@@ -240,7 +241,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex flex-col gap-2">
               {upcomingTasks.map(({ task }) => {
-                const due      = task.dueDate ? new Date(task.dueDate) : null
+                const due      = task.dueDate ? new Date(task.dueDate + 'T12:00:00') : null
                 const mon      = due?.toLocaleString('en-US', { month: 'short' }) ?? ''
                 const day      = due?.getDate() ?? ''
                 const daysAway = due ? Math.ceil((due.getTime() - Date.now()) / 86400000) : 0

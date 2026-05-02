@@ -78,7 +78,7 @@ export default function FriendsPage() {
 
   // Extract friend (not-me) from populated friendship
   const friendUsers: (FriendUser & { friendshipId: string })[] = friends.map((f) => {
-    const friend = f.userId._id === user?._id ? f.friendId : f.userId
+    const friend = f.userId._id.toString() === user?._id ? f.friendId : f.userId
     return { ...friend, friendshipId: f._id }
   })
 
@@ -202,7 +202,7 @@ export default function FriendsPage() {
                   .map((f) => (
                     <div
                       key={f._id}
-                      onClick={() => router.push(`/friends/${f._id}`)}
+                      onClick={() => router.push(`/friends/${f._id}?fid=${f.friendshipId}`)}
                       className="flex items-center gap-2.5 bg-surface border border-border rounded-card p-[11px_13px] shadow-card cursor-pointer active:opacity-80 transition-opacity"
                     >
                       <div className="relative flex-shrink-0">
